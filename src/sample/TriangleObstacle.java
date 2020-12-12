@@ -66,14 +66,20 @@ public class TriangleObstacle extends Obstacle {
     }
 
     public void rotate(){
-        Rotate rotation = new Rotate();
-        rotation.pivotXProperty().set(this.getPosX());
-        rotation.pivotYProperty().set(this.getPosY());
-        this.getGroup().getTransforms().add(rotation);
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(rotation.angleProperty(), 0)),
-                new KeyFrame(Duration.seconds(10*30), new KeyValue(rotation.angleProperty(), 10*3600)));
-        timeline.play();
+
+        Rotate rotation1 = new Rotate();
+        rotation1.pivotXProperty().set(this.getPosX());
+        rotation1.pivotYProperty().set(this.getPosY());
+        this.getGroup().getTransforms().add(rotation1);
+        int angle=360;
+        if(this.isClockwise()==false){
+            angle=angle*-1;
+        }
+        setTimeline(new Timeline(
+                new KeyFrame(Duration.seconds(3), new KeyValue(rotation1.angleProperty(), angle))));
+        getTimeline().setCycleCount(Timeline.INDEFINITE);
+        getTimeline().setAutoReverse(false);
+        getTimeline().play();
 
     }
 

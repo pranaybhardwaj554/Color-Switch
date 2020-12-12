@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
@@ -10,6 +11,7 @@ public abstract class Obstacle {
     private double posX;
     private double posY;
     private Group group;
+    private Timeline timeline;
     private Shape shape[];
     Obstacle(double posX,double posY){
         this.posX=posX;
@@ -31,6 +33,14 @@ public abstract class Obstacle {
         //code elided
     }
     public abstract double getOrientation();
+
+    public Timeline getTimeline() {
+        return timeline;
+    }
+
+    public void setTimeline(Timeline timeline) {
+        this.timeline = timeline;
+    }
 
     public double getPosX() {
         return posX;
@@ -75,5 +85,7 @@ public abstract class Obstacle {
     public void setGroup(Group group) {
         this.group = group;
     }
+
+    public abstract Group draw();
 }
 

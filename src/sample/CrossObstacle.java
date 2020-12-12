@@ -28,11 +28,16 @@ public class CrossObstacle extends Obstacle {
         rotation1.pivotXProperty().set(this.getPosX());
         rotation1.pivotYProperty().set(this.getPosY());
         this.getGroup().getTransforms().add(rotation1);
-        int angle=10*3600;
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(rotation1.angleProperty(), 0)),
-                new KeyFrame(Duration.seconds(30*10), new KeyValue(rotation1.angleProperty(), angle)));
-        timeline.play();
+        int angle=360;
+        if(this.isClockwise()==false){
+            angle=angle*-1;
+        }
+        setTimeline(new Timeline(
+                new KeyFrame(Duration.seconds(3), new KeyValue(rotation1.angleProperty(), angle))));
+        getTimeline().setCycleCount(Timeline.INDEFINITE);
+        getTimeline().setAutoReverse(false);
+        getTimeline().play();
+
 
     }
     public double getRotatingSpeed() {

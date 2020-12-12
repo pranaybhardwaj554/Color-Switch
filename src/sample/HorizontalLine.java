@@ -40,12 +40,12 @@ public class HorizontalLine extends Obstacle {
     public void moving(){
         Translate translate = new Translate();
         this.getGroup().getTransforms().add(translate);
-        Timeline timeline = new Timeline(
+        this.setTimeline(new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(translate.xProperty(), -450)),
-                new KeyFrame(Duration.seconds(5), new KeyValue(translate.xProperty(), 0)));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.setAutoReverse(false);
-        timeline.play();
+                new KeyFrame(Duration.seconds(5), new KeyValue(translate.xProperty(), 0))));
+        this.getTimeline().setCycleCount(Timeline.INDEFINITE);
+        this.getTimeline().setAutoReverse(false);
+        this.getTimeline().play();
 
     }
     public double getLinearSpeed() {
