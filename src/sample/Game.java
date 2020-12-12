@@ -76,6 +76,7 @@ public class Game  {
         pausebutton.setPrefHeight(25);
         pausebutton.setPadding(Insets.EMPTY);
         Group group1 = new Group();
+
         ballg2 = new Group();
         ballg.getChildren().add(ball.draw(width/2.0,height-30));
         ballg2.getChildren().add(ballg);
@@ -151,21 +152,40 @@ public class Game  {
     }
 
     public Group spawnobstacle(double width, double height){
-        int spawnob=(int) (Math.random()*3);
+        int spawnob=(int) (Math.random()*6);
+        int clock= (int) (Math.random()*2);
+        boolean clockWise=true;
+        if(clock==0)
+            clockWise=false;
         if(spawnob==0) {
-            CircleObstacle obs1 = new CircleObstacle(width / 2.0, -130, 20, true, 100, 20);
-            Colli.add(obs1);
-            return obs1.draw();
+            CircleObstacle obstacle = new CircleObstacle(width / 2.0, -130, 20, clockWise, 100, 20);
+            Colli.add(obstacle);
+            return obstacle.draw();
         }
         else if(spawnob==1) {
-            TriangleObstacle triangleObstacle = new TriangleObstacle(width / 2.0, -130, 20, true, 250,ball.getPaint());
-            Colli.add(triangleObstacle);
-            return triangleObstacle.draw();
+            TriangleObstacle obstacle = new TriangleObstacle(width / 2.0, -130, 20, clockWise, 250,ball.getPaint());
+            Colli.add(obstacle);
+            return obstacle.draw();
+        }
+        else if(spawnob==2) {
+            SquareObstacle obstacle = new SquareObstacle(width / 2.0, -130, 20, clockWise, 200);
+            Colli.add(obstacle);
+            return obstacle.draw();
+        }
+        else if(spawnob==3) {
+            CrossObstacle obstacle = new CrossObstacle(width / 2.0+70, -130, 20, clockWise, 120);
+            Colli.add(obstacle);
+            return obstacle.draw();
+        }
+        else if(spawnob==4) {
+            VerticalLine obstacle = new VerticalLine(0, -130, 20, clockWise, 75);
+            Colli.add(obstacle);
+            return obstacle.draw();
         }
         else {
-            HorizontalLine horline = new HorizontalLine(0, -130, 20, true);
-            Colli.add(horline);
-            return horline.draw();
+            HorizontalLine obstacle = new HorizontalLine(0, -130, 20, clockWise);
+            Colli.add(obstacle);
+            return obstacle.draw();
         }
     }
     public void addtosavework(Group c){
@@ -379,3 +399,4 @@ public class Game  {
     }
 
 }
+
