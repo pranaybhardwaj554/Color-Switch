@@ -1,0 +1,42 @@
+#btn1{
+-fx-shape:'M 400 300 A 50 50 0 1 1 550 300 A 50 50 0 1 1 400 300';
+
+}
+
+#btn2{
+-fx-shape:'M 400 300 A 50 50 0 1 1 550 300 A 50 50 0 1 1 400 300';
+-fx-background-color:#4d4d4d
+
+}
+#btn3{
+-fx-shape:'M 400 300 A 50 50 0 1 1 550 300 A 50 50 0 1 1 400 300';
+-fx-background-color:#4d4d4d
+
+}
+
+#btn4{
+-fx-shape:'M 300 350 L 600 350 L 550 400 L 600 450 L 300 450 L 350 400 L 300 350 ';
+-fx-background-color:#3385ff
+
+}
+
+#btn5{
+-fx-shape:'M 300 350 L 600 350 L 550 400 L 600 450 L 300 450 L 350 400 L 300 350 ';
+-fx-background-color:#3385ff
+
+}
+#btn6{
+-fx-shape:'M 300 350 L 600 350 L 550 400 L 600 450 L 300 450 L 350 400 L 300 350 ';
+-fx-background-color:#3385ff
+
+}
+#btn7{
+-fx-shape:'M 300 350 L 600 350 L 550 400 L 600 450 L 300 450 L 350 400 L 300 350 ';
+-fx-background-color:#3385ff
+
+}
+
+#pausebutton{
+-fx-shape:'M 400 300 A 50 50 0 1 1 550 300 A 50 50 0 1 1 400 300';
+
+}
