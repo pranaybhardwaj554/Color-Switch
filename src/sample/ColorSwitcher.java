@@ -7,11 +7,12 @@ import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Shape;
 
+import java.nio.channels.Pipe;
 import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
 
-public class ColorSwitcher {
+public class ColorSwitcher implements Collidable {
     private double radius;
     private double rotatingSpeed;
     private double posX;
@@ -31,15 +32,31 @@ public class ColorSwitcher {
         //code elided
     }
 
+    @Override
+    public Shape[] giveShape(Paint color){
+        return this.getShape();
+    }
+
+    @Override
+    public boolean actionsPerformed(Ball ball, Group g){
+        switchColor(ball);
+        return true;
+    }
+
+    public void checkColor(Ball ball){
+
+    }
+
     public void switchColor(Ball ball){
         if(this.count==0){
-        ArrayList<String> colors=new ArrayList<>();
-        colors.add("FAE100");colors.add("900DFF");colors.add("32DBF0");colors.add("FF0181");
-        int random =(int) (Math.random()*(4));
-        ball.changeColor(colors.get(random));
-        this.setRadius(0);
-        this.getGroup().setOpacity(0);
-        count++;
+            count=count+1;
+            ArrayList<String> colors=new ArrayList<>();
+            colors.add("FAE100");colors.add("900DFF");colors.add("32DBF0");colors.add("FF0181");
+            int random =(int) (Math.random()*(4));
+            while(ball.getPaint().equals(Color.web(colors.get(random))))
+            random =(int) (Math.random()*(4));
+            ball.changeColor(colors.get(random));
+            this.getGroup().setOpacity(0);
         }
     }
 

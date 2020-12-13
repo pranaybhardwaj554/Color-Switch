@@ -29,6 +29,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class Game  {
     static CircleObstacle obs1;
     Group obstacle;
     ArrayList<Group> obss=new ArrayList<>();
-    ArrayList<Obstacle> Colli=new ArrayList<>();
+    ArrayList<Collidable> Colli=new ArrayList<>();
     SaveWork saveWork;
     Timeline tl;
     int k=0;
@@ -84,7 +85,7 @@ public class Game  {
         finalg.getChildren().add(ballg2);
         finalg.getChildren().add(Score(width,height));
         Scene scene = new Scene(finalg,width,height);
-        obs1= new CircleObstacle( width/2.0,300,width/2,true,100,20);
+        obs1= new CircleObstacle( width/2.0,300,width/2,true,100,17.5);
         Colli.add(obs1);
         Group prevobs=obs1.draw();
         obstacle.getChildren().add(prevobs);
@@ -152,13 +153,13 @@ public class Game  {
     }
 
     public Group spawnobstacle(double width, double height){
-        int spawnob=(int) (Math.random()*6);
+        int spawnob=9;
         int clock= (int) (Math.random()*2);
         boolean clockWise=true;
         if(clock==0)
-            clockWise=false;
+            spawnob=6;
         if(spawnob==0) {
-            CircleObstacle obstacle = new CircleObstacle(width / 2.0, -130, 20, clockWise, 100, 20);
+            CircleObstacle obstacle = new CircleObstacle(width / 2.0, -130, 20, clockWise, 100, 17.5);
             Colli.add(obstacle);
             return obstacle.draw();
         }
@@ -173,12 +174,49 @@ public class Game  {
             return obstacle.draw();
         }
         else if(spawnob==3) {
-            CrossObstacle obstacle = new CrossObstacle(width / 2.0+70, -130, 20, clockWise, 120);
+            CrossObstacle obstacle = new CrossObstacle(width / 2.0+70, -130, 20, clockWise, 120,20);
             Colli.add(obstacle);
             return obstacle.draw();
         }
         else if(spawnob==4) {
             VerticalLine obstacle = new VerticalLine(0, -130, 20, clockWise, 75);
+            Colli.add(obstacle);
+            return obstacle.draw();
+        }
+        else if(spawnob==5) {
+            double radius1=100;double radius2=70;double stroke=15;
+            CircleObstacle obstacle1 = new CircleObstacle(width / 2.0+radius1+stroke/2.0, -130, 20, clockWise, radius1, stroke);
+            CircleObstacle obstacle2 = new CircleObstacle(width / 2.0-radius2-stroke/2.0, -130, 20, clockWise, radius2, stroke);
+            obstacle1.draw();obstacle2.draw();
+            CircleCircle1Obstacle obstacle = new CircleCircle1Obstacle(obstacle1,obstacle2,ball.getColor());
+            Colli.add(obstacle);
+            return obstacle.draw();
+        }
+        else if(spawnob==6) {
+            double radius1=115;double radius2=90;double stroke=15;
+            CircleObstacle obstacle1 = new CircleObstacle(width / 2.0, -130, 20, clockWise, radius1, stroke);
+            CircleObstacle obstacle2 = new CircleObstacle(width / 2.0, -130, 20, clockWise, radius2, stroke);
+            obstacle1.draw();obstacle2.draw();
+            CircleCircle2Obstacle obstacle = new CircleCircle2Obstacle(obstacle1,obstacle2,ball.getColor());
+            Colli.add(obstacle);
+            return obstacle.draw();
+        }
+        else if(spawnob==7) {
+            double radius1=90;double radius2=60;double stroke=22;
+            CrossObstacle obstacle1 = new CrossObstacle(width / 2.0+radius1+stroke/2.0, -130.0, 20,clockWise,radius1,stroke );
+            CrossObstacle obstacle2 = new CrossObstacle(width / 2.0-radius2-stroke/2.0, -130.0, 20, clockWise, radius2,2*stroke/3.0);
+            obstacle1.draw();obstacle2.draw();
+            PlusPlusObstacle obstacle = new PlusPlusObstacle(obstacle1,obstacle2,ball.getColor());
+            Colli.add(obstacle);
+            return obstacle.draw();
+        }
+        else if(spawnob==8) {
+            Star obstacle = new Star("white",width/2.0,-130 );
+            Colli.add(obstacle);
+            return obstacle.draw();
+        }
+        else if(spawnob==9) {
+            ColorSwitcher obstacle = new ColorSwitcher(15,width/2.0,width/2.0,-130 );
             Colli.add(obstacle);
             return obstacle.draw();
         }
@@ -235,23 +273,23 @@ public class Game  {
     }
 
     //Collision Checker
-    public void checkCollision(Obstacle obstacle){
+    public void checkCollision(Collidable obstacle){
+        obstacle.checkColor(ball);
         ArrayList<Shape> intersect = new ArrayList<>();
         Shape shape[] = obstacle.giveShape(ball.getPaint());
         for (int i = 0; i < shape.length; i++) {
+            System.out.println(obstacle.toString());
             intersect.add(Shape.intersect(ball.getShape(), shape[i]));
             if (intersect.get(i).getBoundsInLocal().getWidth() != -1) {
                 System.out.println("Collided");
                 if(a){
-                    stopTimer();
-                    a=false;
-                    finalg.getChildren().add(ball.gameover_animation());
-
-
-                    ball.game_over(ball.getGroup().getBoundsInParent().getCenterX(),ball.getGroup().getBoundsInParent().getCenterY());
-                    tl.pause();
+                    a=obstacle.actionsPerformed(ball,finalg);
+                    if(!a){
+                        stopTimer();
+                        tl.pause();
+                    }
+                    setScore();
                 }
-                times=times+1;
                 break;
             }
         }

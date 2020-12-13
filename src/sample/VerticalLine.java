@@ -153,4 +153,5 @@ public class VerticalLine extends Obstacle {
         this.translate();
         return this.getGroup();
     }
+
 }

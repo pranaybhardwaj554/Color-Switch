@@ -60,9 +60,7 @@ public class Ball {
         //code elided;
         return 0;
     }
-    public void changeColor(ColorSwitcher switcher){
-        //code elided
-    }
+
 
     public String getColor() {
         return color;

@@ -3,6 +3,7 @@ package sample;
 import javafx.animation.FadeTransition;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineJoin;
@@ -11,13 +12,14 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 
-public class Star {
+public class Star implements Collidable {
     private String color;
     private double posX;
     private double posY;
     private Shape shape[];
     private Group group;
     private int count;
+    private FadeTransition Fade;
 
 
     public Star(String color, double posX, double posY) {
@@ -34,6 +36,22 @@ public class Star {
         return shape;
     }
 
+    public void checkColor(Ball ball){
+
+    }
+
+    @Override
+    public Shape[] giveShape(Paint color){
+        return getShape();
+    }
+
+    @Override
+    public boolean actionsPerformed(Ball ball, Group g){
+        getFade().stop();
+        switchColor(ball);
+        return true;
+    }
+
     public void setShape(Shape[] shape) {
         this.shape = shape;
     }
@@ -48,8 +66,8 @@ public class Star {
 
     public void switchColor(Ball ball){
         if(this.count==0){
-            ball.setStarsCollected(ball.getStarsCollected()+1);
             this.getGroup().setOpacity(0);
+            ball.setStarsCollected(ball.getStarsCollected()+1);
             count++;
         }
     }
@@ -72,6 +90,22 @@ public class Star {
 
     public double getPosY() {
         return posY;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public FadeTransition getFade() {
+        return Fade;
+    }
+
+    public void setFade(FadeTransition fade) {
+        Fade = fade;
     }
 
     public void setPosY(double posY) {
@@ -105,17 +139,17 @@ public class Star {
         star1.getTransforms().add(rotation);
         star.setFill(Color.web("#FFFFFF"));
         star1.setFill(Color.web("#FFFFFF"));
-        FadeTransition Fade = new FadeTransition();
-        Fade.setDuration(Duration.millis(500));
-        Fade.setFromValue(10);
-        Fade.setToValue(0.7);
-        Fade.setAutoReverse(true);
-        Fade.setCycleCount(1000);
+        setFade( new FadeTransition());
+        getFade().setDuration(Duration.millis(500));
+        getFade().setFromValue(10);
+        getFade().setToValue(0.7);
+        getFade().setAutoReverse(true);
+        getFade().setCycleCount(1000);
         this.setGroup(new Group(star,star1));
         Shape shape[] ={star,star1};
         this.setShape(shape);
-        Fade.setNode(this.getGroup());
-        Fade.play();
+        getFade().setNode(this.getGroup());
+        getFade().play();
         return this.getGroup();
     }
 

@@ -16,13 +16,24 @@ public class CrossObstacle extends Obstacle {
     private boolean isClockwise;
     private double oneSideLength;
     private double orientation;
-    public CrossObstacle(double posX, double posY, double rotatingSpeed, boolean isClockwise, double oneSideLength) {
+    private double stroke;
+    public CrossObstacle(double posX, double posY, double rotatingSpeed, boolean isClockwise, double oneSideLength,double stroke) {
         super(posX, posY);
         this.rotatingSpeed = rotatingSpeed;
         this.isClockwise = isClockwise;
         this.oneSideLength = oneSideLength;
         this.orientation = 0;
+        this.stroke=stroke;
     }
+
+    public double getStroke() {
+        return stroke;
+    }
+
+    public void setStroke(double stroke) {
+        this.stroke = stroke;
+    }
+
     public void rotate(){
         Rotate rotation1 = new Rotate();
         rotation1.pivotXProperty().set(this.getPosX());
@@ -33,13 +44,11 @@ public class CrossObstacle extends Obstacle {
             angle=angle*-1;
         }
         setTimeline(new Timeline(
-                new KeyFrame(Duration.seconds(3), new KeyValue(rotation1.angleProperty(), angle))));
+                new KeyFrame(Duration.seconds(4), new KeyValue(rotation1.angleProperty(), angle))));
         getTimeline().setCycleCount(Timeline.INDEFINITE);
         getTimeline().setAutoReverse(false);
         getTimeline().play();
-
-
-    }
+        }
     public double getRotatingSpeed() {
         return rotatingSpeed;
     }
@@ -77,26 +86,27 @@ public class CrossObstacle extends Obstacle {
         double length=this.getOneSideLength();
         double centerX=this.getPosX();
         double centerY = this.getPosY();
+        double stroke = this.getStroke();
         Line line1=new Line(centerX,centerY,centerX+length,centerY);
         line1.setStrokeLineCap(StrokeLineCap.ROUND);
         line1.setStroke(Color.web(yellow));
-        line1.setStrokeWidth(20);
+        line1.setStrokeWidth(stroke);
         Line line2=new Line(centerX,centerY,centerX-length,centerY);
         line2.setStrokeLineCap(StrokeLineCap.ROUND);
         line2.setStroke(Color.web(pink));
-        line2.setStrokeWidth(20);
+        line2.setStrokeWidth(stroke);
         Line line3=new Line(centerX,centerY,centerX,centerY+length);
         line3.setStrokeLineCap(StrokeLineCap.ROUND);
         line3.setStroke(Color.web(blue));
-        line3.setStrokeWidth(20);
+        line3.setStrokeWidth(stroke);
         Line line4=new Line(centerX,centerY,centerX,centerY-length);
         line4.setStrokeLineCap(StrokeLineCap.ROUND);
         line4.setStroke(Color.web(purple));
-        line4.setStrokeWidth(20);
+        line4.setStrokeWidth(stroke);
         Line point=new Line(centerX,centerY,centerX,centerY);
         point.setStrokeLineCap(StrokeLineCap.SQUARE);
         point.setStroke(Color.web("272727"));
-        point.setStrokeWidth(20);
+        point.setStrokeWidth(stroke);
         Shape[] shape = {line1,line2,line3,line4,point};
         this.setShape(shape);
         this.setGroup(new Group(line1,line2,line3,line4,point));

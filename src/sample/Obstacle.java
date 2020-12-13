@@ -7,7 +7,7 @@ import javafx.scene.shape.Shape;
 
 import java.io.Serializable;
 
-public abstract class Obstacle {
+public abstract class Obstacle implements Collidable {
     private double posX;
     private double posY;
     private Group group;
@@ -51,7 +51,7 @@ public abstract class Obstacle {
     }
 
     public Shape[] giveShape(Paint color){
-        Shape give[] = new Shape[this.getShape().length-1];
+        Shape[] give = new Shape[this.getShape().length-1];
         int count=0;
         for(int i=0;i<this.getShape().length;i++){
             if(!(this.getShape()[i].getStroke().toString().equals(color.toString()))){
@@ -60,6 +60,18 @@ public abstract class Obstacle {
             }
         }
         return give;
+    }
+    @Override
+    public boolean actionsPerformed(Ball ball,Group g){
+        g.getChildren().add(ball.gameover_animation());
+        ball.game_over(ball.getGroup().getBoundsInParent().getCenterX(),ball.getGroup().getBoundsInParent().getCenterY());
+        this.getTimeline().stop();
+        return false;
+    }
+
+    @Override
+    public void checkColor(Ball ball){
+
     }
 
     public void setShape(Shape[] shape) {

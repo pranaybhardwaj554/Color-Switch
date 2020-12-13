@@ -65,6 +65,11 @@ public class TriangleObstacle extends Obstacle {
         this.orientation = orientation;
     }
 
+    @Override
+    public void checkColor(Ball ball){
+
+    }
+
     public void rotate(){
 
         Rotate rotation1 = new Rotate();
