@@ -21,7 +21,7 @@ public class CircleCircle2Obstacle extends Obstacle_Combiner{
         rotate1.pivotYProperty().set(obstacle1.getPosY());
         rotate2.pivotXProperty().set(obstacle2.getPosX());
         rotate2.pivotYProperty().set(obstacle2.getPosY());
-        if(getCommonColor().equals("FAE100") ){
+        if(getCommonColor().equals("FAE100") || getCommonColor().equals("FF0181") ){
             setTimeline1(new Timeline(
                     new KeyFrame(Duration.seconds(0), new KeyValue(rotate1.angleProperty(), -45)),
                     new KeyFrame(Duration.seconds(4), new KeyValue(rotate1.angleProperty(), -45+360))));
@@ -29,29 +29,13 @@ public class CircleCircle2Obstacle extends Obstacle_Combiner{
                     new KeyFrame(Duration.seconds(0), new KeyValue(rotate2.angleProperty(), -45)),
                     new KeyFrame(Duration.seconds(4), new KeyValue(rotate2.angleProperty(), -45-360))));
         }
-        else if(getCommonColor().equals("900DFF")){
+        else if(getCommonColor().equals("900DFF")||getCommonColor().equals("32DBF0")){
             setTimeline1(new Timeline(
                     new KeyFrame(Duration.seconds(0), new KeyValue(rotate1.angleProperty(), -(90+45))),
                     new KeyFrame(Duration.seconds(4), new KeyValue(rotate1.angleProperty(), -(90+45)+360))));
             setTimeline2(new Timeline(
                     new KeyFrame(Duration.seconds(0), new KeyValue(rotate2.angleProperty(), -(90+45))),
                     new KeyFrame(Duration.seconds(4), new KeyValue(rotate2.angleProperty(), -(90+45)-360))));
-        }
-        else if(getCommonColor().equals("32DBF0")){
-            setTimeline1(new Timeline(
-                    new KeyFrame(Duration.seconds(0), new KeyValue(rotate1.angleProperty(), -(180+45))),
-                    new KeyFrame(Duration.seconds(4), new KeyValue(rotate1.angleProperty(), -(180+45)+360))));
-            setTimeline2(new Timeline(
-                    new KeyFrame(Duration.seconds(0), new KeyValue(rotate2.angleProperty(), -(180+45))),
-                    new KeyFrame(Duration.seconds(4), new KeyValue(rotate2.angleProperty(), -(180+45)+360))));
-        }
-        else if(getCommonColor().equals("FF0181")){
-            setTimeline1(new Timeline(
-                    new KeyFrame(Duration.seconds(0), new KeyValue(rotate1.angleProperty(), -(270+45))),
-                    new KeyFrame(Duration.seconds(4), new KeyValue(rotate1.angleProperty(), -(270+45)+360))));
-            setTimeline2(new Timeline(
-                    new KeyFrame(Duration.seconds(0), new KeyValue(rotate2.angleProperty(), -(270+45))),
-                    new KeyFrame(Duration.seconds(4), new KeyValue(rotate2.angleProperty(), -(180+45)-360))));
         }
         getTimeline2().setCycleCount(Timeline.INDEFINITE);
         getTimeline2().setAutoReverse(false);

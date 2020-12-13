@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 
+import java.util.ArrayList;
+
 public abstract class Obstacle_Combiner implements Collidable {
     protected Obstacle obstacle1;
     protected Obstacle obstacle2;
@@ -113,14 +115,14 @@ public abstract class Obstacle_Combiner implements Collidable {
         }
     }
 
-    public Shape[] giveShape(Paint color){
-        Shape[] give = new Shape[6];
-        Shape[] part1 = obstacle1.giveShape(color);
-        Shape[] part2 = obstacle2.giveShape(color);
-        for(int i=0;i<3;i++)
-            give[i]=part1[i];
-        for(int i=3;i<6;i++)
-            give[i]=part2[i-3];
+    public ArrayList<Shape> giveShape(Paint color){
+        ArrayList<Shape> give = new ArrayList<>();
+        ArrayList<Shape> part1 = obstacle1.giveShape(color);
+        ArrayList<Shape> part2 = obstacle2.giveShape(color);
+        for(int i=0;i<part1.size();i++)
+            give.add(part1.get(i));
+        for(int i=0;i<part2.size();i++)
+            give.add(part2.get(i));
         return give;
     }
 

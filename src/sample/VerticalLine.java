@@ -47,18 +47,6 @@ public class VerticalLine extends Obstacle {
         timeline1.play();
     }
 
-    @Override
-    public Shape[] giveShape(Paint color){
-        Shape give[] = new Shape[this.getShape().length-2];
-        int count=0;
-        for(int i=0;i<this.getShape().length;i++){
-            if(!(this.getShape()[i].getStroke().toString().equals(color.toString()))){
-                give[count]=this.getShape()[i];
-                count++;
-            }
-        }
-        return give;
-    }
 
     public Group getGroup1() {
         return group1;

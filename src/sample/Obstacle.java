@@ -6,6 +6,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public abstract class Obstacle implements Collidable {
     private double posX;
@@ -50,12 +51,12 @@ public abstract class Obstacle implements Collidable {
         return shape;
     }
 
-    public Shape[] giveShape(Paint color){
-        Shape[] give = new Shape[this.getShape().length-1];
+    public ArrayList<Shape> giveShape(Paint color){
+        ArrayList<Shape> give = new ArrayList<>();
         int count=0;
         for(int i=0;i<this.getShape().length;i++){
             if(!(this.getShape()[i].getStroke().toString().equals(color.toString()))){
-                give[count]=this.getShape()[i];
+                give.add(this.getShape()[i]);
                 count++;
             }
         }

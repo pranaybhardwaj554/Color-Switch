@@ -41,8 +41,12 @@ public class Star implements Collidable {
     }
 
     @Override
-    public Shape[] giveShape(Paint color){
-        return getShape();
+    public ArrayList<Shape> giveShape(Paint color){
+        ArrayList<Shape> give = new ArrayList<>();
+        for(int i=0;i<getShape().length;i++){
+            give.add(getShape()[i]);
+        }
+        return give;
     }
 
     @Override

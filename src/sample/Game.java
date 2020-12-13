@@ -58,7 +58,7 @@ public class Game  {
         finalg = new Group();
         saveWork=new SaveWork();
         String yellow="FAE100";String purple="900DFF";String blue ="32DBF0";String pink="FF0181";
-        ball = new Ball(purple,10,0,0,19);
+        ball = new Ball(pink,10,0,0,19);
         Group ballg = new Group();
         obstacle=new Group();
         Button pausebutton=new Button();
@@ -153,11 +153,11 @@ public class Game  {
     }
 
     public Group spawnobstacle(double width, double height){
-        int spawnob=9;
+        int spawnob=(int) (Math.random()*10);
         int clock= (int) (Math.random()*2);
         boolean clockWise=true;
         if(clock==0)
-            spawnob=6;
+            clockWise=false;
         if(spawnob==0) {
             CircleObstacle obstacle = new CircleObstacle(width / 2.0, -130, 20, clockWise, 100, 17.5);
             Colli.add(obstacle);
@@ -276,10 +276,14 @@ public class Game  {
     public void checkCollision(Collidable obstacle){
         obstacle.checkColor(ball);
         ArrayList<Shape> intersect = new ArrayList<>();
-        Shape shape[] = obstacle.giveShape(ball.getPaint());
-        for (int i = 0; i < shape.length; i++) {
-            System.out.println(obstacle.toString());
-            intersect.add(Shape.intersect(ball.getShape(), shape[i]));
+        ArrayList<Shape> shape = obstacle.giveShape(ball.getPaint());
+        for (int i = 0; i < shape.size(); i++) {
+            try{
+                intersect.add(Shape.intersect(ball.getShape(), shape.get(i)));
+            }
+            catch (NullPointerException e){
+                System.out.println(obstacle.toString());
+            }
             if (intersect.get(i).getBoundsInLocal().getWidth() != -1) {
                 System.out.println("Collided");
                 if(a){

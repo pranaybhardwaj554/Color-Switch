@@ -32,9 +32,14 @@ public class ColorSwitcher implements Collidable {
         //code elided
     }
 
+
     @Override
-    public Shape[] giveShape(Paint color){
-        return this.getShape();
+    public ArrayList<Shape> giveShape(Paint color){
+        ArrayList<Shape> give = new ArrayList<>();
+        for(int i=0;i<getShape().length;i++){
+            give.add(getShape()[i]);
+        }
+        return give;
     }
 
     @Override
@@ -53,8 +58,9 @@ public class ColorSwitcher implements Collidable {
             ArrayList<String> colors=new ArrayList<>();
             colors.add("FAE100");colors.add("900DFF");colors.add("32DBF0");colors.add("FF0181");
             int random =(int) (Math.random()*(4));
-            while(ball.getPaint().equals(Color.web(colors.get(random))))
-            random =(int) (Math.random()*(4));
+            while(ball.getPaint().equals(Color.web(colors.get(random)))){
+                random =(int) (Math.random()*(4));
+            }
             ball.changeColor(colors.get(random));
             this.getGroup().setOpacity(0);
         }

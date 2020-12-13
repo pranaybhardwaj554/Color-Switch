@@ -24,18 +24,6 @@ public class HorizontalLine extends Obstacle {
         Orientation = 0;
     }
 
-    @Override
-    public Shape[] giveShape(Paint color){
-        Shape give[] = new Shape[this.getShape().length-2];
-        int count=0;
-        for(int i=0;i<this.getShape().length;i++){
-            if(!(this.getShape()[i].getStroke().toString().equals(color.toString()))){
-                give[count]=this.getShape()[i];
-                count++;
-            }
-        }
-        return give;
-    }
 
     public void moving(){
         Translate translate = new Translate();
