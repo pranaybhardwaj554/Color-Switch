@@ -21,6 +21,8 @@ public class VerticalLine extends Obstacle {
     private double orientation;
     private Group group1;
     private Group group2;
+    private Timeline timeline1;
+    private Timeline timeline2;
 
     public VerticalLine(double posX, double posY, double linearSpeed, boolean isRightward, double lineSize) {
         super(posX, posY);
@@ -35,16 +37,24 @@ public class VerticalLine extends Obstacle {
         Translate translate2 = new Translate();
         this.getGroup1().getTransforms().add(translate1);
         this.getGroup2().getTransforms().add(translate2);
-        Timeline timeline1 = new Timeline(
+        timeline1 = new Timeline(
                 new KeyFrame(Duration.seconds(5), new KeyValue(translate1.xProperty(), translate1.getX()+420)));
         timeline1.setCycleCount(Timeline.INDEFINITE);
         timeline1.setAutoReverse(true);
-        Timeline timeline2 = new Timeline(
+        timeline2 = new Timeline(
                 new KeyFrame(Duration.seconds(5), new KeyValue(translate2.xProperty(), translate1.getX()-420)));
         timeline2.setCycleCount(Timeline.INDEFINITE);
         timeline2.setAutoReverse(true);
         timeline2.play();
         timeline1.play();
+    }
+    @Override
+    public boolean actionsPerformed(Ball ball,Group g){
+        g.getChildren().add(ball.gameover_animation());
+        ball.game_over(ball.getGroup().getBoundsInParent().getCenterX(),ball.getGroup().getBoundsInParent().getCenterY());
+        timeline1.stop();
+        timeline2.stop();
+        return false;
     }
 
 
