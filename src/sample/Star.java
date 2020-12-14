@@ -76,6 +76,16 @@ public class Star implements Collidable {
         }
     }
 
+    @Override
+    public void pause(){
+        getFade().pause();
+    }
+
+    @Override
+    public void resume(){
+        getFade().play();
+    }
+
     public String getColor() {
         return color;
     }

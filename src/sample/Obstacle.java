@@ -75,6 +75,16 @@ public abstract class Obstacle implements Collidable {
 
     }
 
+    @Override
+    public void pause(){
+        getTimeline().pause();
+    }
+
+    @Override
+    public void resume(){
+        getTimeline().play();
+    }
+
     public void setShape(Shape[] shape) {
         this.shape = shape;
     }

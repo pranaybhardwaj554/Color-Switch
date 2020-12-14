@@ -10,4 +10,6 @@ public interface Collidable {
     public ArrayList<Shape> giveShape(Paint color);
     public boolean actionsPerformed(Ball ball, Group g);
     public void checkColor(Ball ball);
+    public void pause();
+    public void resume();
 }

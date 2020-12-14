@@ -115,6 +115,18 @@ public abstract class Obstacle_Combiner implements Collidable {
         }
     }
 
+    @Override
+    public void pause(){
+        getTimeline1().pause();
+        getTimeline2().pause();
+    }
+
+    @Override
+    public void resume(){
+        getTimeline1().play();
+        getTimeline2().play();
+    }
+
     public ArrayList<Shape> giveShape(Paint color){
         ArrayList<Shape> give = new ArrayList<>();
         ArrayList<Shape> part1 = obstacle1.giveShape(color);

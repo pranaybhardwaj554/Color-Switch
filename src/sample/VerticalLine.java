@@ -57,6 +57,17 @@ public class VerticalLine extends Obstacle {
         return false;
     }
 
+    @Override
+    public void pause(){
+        timeline1.pause();
+        timeline2.pause();
+    }
+
+    @Override
+    public void resume(){
+        timeline1.play();
+        timeline2.play();
+    }
 
     public Group getGroup1() {
         return group1;

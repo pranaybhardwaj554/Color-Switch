@@ -66,6 +66,15 @@ public class ColorSwitcher implements Collidable {
         }
     }
 
+    @Override
+    public void pause(){
+
+    }
+    @Override
+    public void resume(){
+        return;
+    }
+
     public double getRadius() {
         return radius;
     }
