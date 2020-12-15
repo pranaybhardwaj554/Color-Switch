@@ -14,14 +14,15 @@ import javafx.scene.shape.Shape;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
+import java.io.Serializable;
 import java.net.PortUnreachableException;
 import java.security.PublicKey;
 import java.sql.Time;
 import java.util.ArrayList;
 
-public class Ball {
+public class Ball implements Serializable {
     boolean only_once=true;
-    private Shape shape;
+    private transient Shape shape;
     private String color;
     private double posX;
     private double posY;
@@ -29,11 +30,11 @@ public class Ball {
     private double distanceCovered;
     private int starsCollected;
     private double velocity;
-    private Group group;
-    private Group group2;
-    private Paint paint;
-    ArrayList<Group> game_over;
-    PathTransition pathTransition;
+    private transient Group group;
+    private transient Group group2;
+    private transient Paint paint;
+    transient ArrayList<Group> game_over;
+    transient PathTransition pathTransition;
 
 
     public Ball(String color, double radius, double distanceCovered, int starsCollected, double velocity) {

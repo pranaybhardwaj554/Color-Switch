@@ -17,7 +17,7 @@ public class HorizontalLine extends Obstacle {
     private boolean isRightward;
     private double Orientation;
 
-    public HorizontalLine(int posX, int posY, double linearSpeed, boolean isRightward) {
+    public HorizontalLine(double posX, double posY, double linearSpeed, boolean isRightward) {
         super(posX, posY);
         this.linearSpeed = linearSpeed;
         this.isRightward = isRightward;

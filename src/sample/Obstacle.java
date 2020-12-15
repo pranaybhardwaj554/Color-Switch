@@ -8,12 +8,12 @@ import javafx.scene.shape.Shape;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class Obstacle implements Collidable {
+public abstract class Obstacle implements Collidable, Serializable {
     private double posX;
     private double posY;
-    private Group group;
-    private Timeline timeline;
-    private Shape shape[];
+    private transient Group group;
+    private transient Timeline timeline;
+    private transient Shape shape[];
     Obstacle(double posX,double posY){
         this.posX=posX;
         this.posY=posY;

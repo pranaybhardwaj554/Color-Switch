@@ -22,7 +22,7 @@ public class TriangleObstacle extends Obstacle {
     private boolean isClockwise;
     private double side;
     private double orientation;
-    private Paint color;
+    private transient Paint color;
 
     public TriangleObstacle(double posX, double posY, double rotatingSpeed, boolean isClockwise, double side, Paint color) {
         super(posX, posY);

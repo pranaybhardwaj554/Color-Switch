@@ -17,8 +17,8 @@ public class ColorSwitcher implements Collidable {
     private double rotatingSpeed;
     private double posX;
     private double posY;
-    private Shape shape[];
-    private Group group;
+    private transient Shape shape[];
+    private transient Group group;
     private int count;
     public ColorSwitcher(double radius, double rotatingSpeed, double posX, double posY) {
         this.radius = radius;

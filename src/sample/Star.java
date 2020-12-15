@@ -10,16 +10,17 @@ import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Star implements Collidable {
+public class Star implements Collidable, Serializable {
     private String color;
     private double posX;
     private double posY;
-    private Shape shape[];
-    private Group group;
+    private transient Shape shape[];
+    private transient Group group;
     private int count;
-    private FadeTransition Fade;
+    private transient FadeTransition Fade;
 
 
     public Star(String color, double posX, double posY) {

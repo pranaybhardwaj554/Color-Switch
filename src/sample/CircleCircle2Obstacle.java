@@ -16,8 +16,6 @@ public class CircleCircle2Obstacle extends Obstacle_Combiner{
         Rotate rotate2 = new Rotate();
         getObstacle2().getGroup().getTransforms().add(rotate2);
         rotate1.pivotXProperty().set(obstacle1.getPosX());
-        System.out.println(obstacle1.getPosX());
-        System.out.println(obstacle2.getPosX());
         rotate1.pivotYProperty().set(obstacle1.getPosY());
         rotate2.pivotXProperty().set(obstacle2.getPosX());
         rotate2.pivotYProperty().set(obstacle2.getPosY());

@@ -6,17 +6,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class Obstacle_Combiner implements Collidable {
+public abstract class Obstacle_Combiner implements Collidable, Serializable {
     protected Obstacle obstacle1;
     protected Obstacle obstacle2;
     private String commonColor;
     private double orientation1;
     private double orientation2;
-    private Group group;
-    private Timeline timeline1;
-    private Timeline timeline2;
+    private transient Group group;
+    private transient Timeline timeline1;
+    private transient Timeline timeline2;
 
     public Obstacle_Combiner(Obstacle obstacle1, Obstacle obstacle2, String commonColor) {
         this.obstacle1 = obstacle1;
@@ -107,13 +108,50 @@ public abstract class Obstacle_Combiner implements Collidable {
 
     @Override
     public void checkColor(Ball ball){
-        if(!ball.getColor().equals(getCommonColor())){
-            setCommonColor(ball.getColor());
-            getTimeline1().stop();
-            getTimeline2().stop();
-            move();
+        int k=0;
+        synchronized (this){
+            if(!ball.getColor().equals(getCommonColor())){
+                if(ball.getColor().equals("FAE100") && getCommonColor().equals("FF0181")){
+                    setCommonColor(ball.getColor());//No change is done
+                }
+                else if(ball.getColor().equals("FAE100") && !getCommonColor().equals("FF0181")){
+                    replace("FAE100","900DFF");
+                    replace("FF0181","32DBF0");
+                    setCommonColor(ball.getColor());
+                    k++;
+                }
+                else if(ball.getColor().equals("FF0181") && getCommonColor().equals("FAE100")) {
+                    setCommonColor(ball.getColor());//No change is done
+                }
+                else if(ball.getColor().equals("FF0181") && !getCommonColor().equals("FAE100")){
+                    replace("FAE100","900DFF");
+                    replace("FF0181","32DBF0");
+                    setCommonColor(ball.getColor());
+                    k++;
+                }
+                else if(ball.getColor().equals("900DFF") && getCommonColor().equals("32DBF0")) {
+                    setCommonColor(ball.getColor());//No change is done
+                }
+                else if(ball.getColor().equals("900DFF") && !getCommonColor().equals("32DBF0")){
+                    replace("FAE100","900DFF");
+                    replace("FF0181","32DBF0");
+                    setCommonColor(ball.getColor());
+                    k++;
+                }
+                else if(ball.getColor().equals("32DBF0") && getCommonColor().equals("900DFF")) {
+                    setCommonColor(ball.getColor());//No change is done
+                }
+                else if(ball.getColor().equals("32DBF0") && !getCommonColor().equals("900DFF")){
+                    replace("FAE100","900DFF");
+                    replace("FF0181","32DBF0");
+                    setCommonColor(ball.getColor());
+                    k++;
+                }
+                System.out.println(k);
+            }
         }
     }
+
 
     @Override
     public void pause(){
@@ -125,6 +163,35 @@ public abstract class Obstacle_Combiner implements Collidable {
     public void resume(){
         getTimeline1().play();
         getTimeline2().play();
+    }
+
+    public void replace(String color1,String color2){
+        int index1=0;
+        int index2=0;
+        for(int i=0;i<getObstacle1().getShape().length;i++){
+            if(getObstacle1().getShape()[i].getStroke().equals(Color.web(color1))){
+                index1=i;
+            }
+        }
+        for(int i=0;i<getObstacle1().getShape().length;i++){
+            if(getObstacle1().getShape()[i].getStroke().equals(Color.web(color2))){
+                index2=i;
+            }
+        }
+        getObstacle1().getShape()[index1].setStroke(Color.web(color2));
+        getObstacle1().getShape()[index2].setStroke(Color.web(color1));
+        for(int i=0;i<getObstacle2().getShape().length;i++){
+            if(getObstacle2().getShape()[i].getStroke().equals(Color.web(color1))){
+                index1=i;
+            }
+        }
+        for(int i=0;i<getObstacle2().getShape().length;i++){
+            if(getObstacle2().getShape()[i].getStroke().equals(Color.web(color2))){
+                index2=i;
+            }
+        }
+        getObstacle2().getShape()[index1].setStroke(Color.web(color2));
+        getObstacle2().getShape()[index2].setStroke(Color.web(color1));
     }
 
     public ArrayList<Shape> giveShape(Paint color){

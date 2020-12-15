@@ -240,23 +240,14 @@ public class MainMenu {
 
             }
         });
+        Pane loadpane=loadscreen();
+        Scene loadscene=new Scene(loadpane, width, height1);
 
         btn2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Game game = new Game();
-                try {
+                primaryStage.setScene(loadscene);
 
-//                    Pane pane=game.Start(width,height1);
-
-                    primaryStage.setScene(game.loadGame(width,height1));
-//                    stage2.setScene(game.Start(width,height1));
-//                  stage2.show();
-
-
-                } catch (InterruptedException | IOException e) {
-                    e.printStackTrace();
-                }
             }
         });
         return pane;
@@ -272,5 +263,161 @@ public class MainMenu {
     public static void setPrimaryStage(Stage primaryStage) {
         MainMenu.primaryStage = primaryStage;
     }
+    public Pane loadscreen(){
+        int width=450;
+        int height=600;
+        int height1=770;
+
+        Pane savepane=new Pane();
+        savepane.setStyle("-fx-background-color: #272727");
+
+        javafx.scene.control.Button btn4 = new javafx.scene.control.Button("SLOT 1");
+        javafx.scene.control.Button btn5 = new javafx.scene.control.Button("SLOT 2");
+        javafx.scene.control.Button btn6 = new javafx.scene.control.Button("SLOT 3");
+        javafx.scene.control.Button btn7 = new javafx.scene.control.Button("SLOT 4");
+        javafx.scene.control.Button btn8 = new javafx.scene.control.Button("BACK TO MAINMENU");
+        btn4.setId("btn4");
+        btn5.setId("btn5");
+        btn6.setId("btn6");
+        btn7.setId("btn7");
+
+
+
+        savepane.getChildren().add(btn8);
+
+        Font font = Font.font(
+                "Franklin Gothic Medium", FontPosture.REGULAR, 20);
+
+        File directory = new File("./allsaves/");
+        String[] flist = directory.list();
+
+        if (flist == null) {
+            System.out.println("Empty directory.");
+        }
+        for(int i=0;i<flist.length;i++){
+            if(flist[i].equals("out1.txt")){
+                savepane.getChildren().add(btn4);
+
+
+            }
+            else if(flist[i].equals("out2.txt")){
+                savepane.getChildren().add(btn5);
+
+            }
+            else if(flist[i].equals("out3.txt")){
+                savepane.getChildren().add(btn6);
+
+            }
+            else if(flist[i].equals("out4.txt")){
+                savepane.getChildren().add(btn7);
+
+            }
+        }
+
+
+
+        btn4.setLayoutX(140);
+        btn4.setLayoutY(225);
+        btn5.setLayoutX(140);
+        btn5.setLayoutY(300);
+        btn6.setLayoutX(140);
+        btn6.setLayoutY(375);
+        btn7.setLayoutX(140);
+        btn7.setLayoutY(450);
+
+        btn8.setLayoutX(140);
+        btn8.setLayoutY(540);
+
+        btn4.setFont(font);
+        btn4.setTextFill(Color.WHITE);
+        btn5.setFont(font);
+        btn5.setTextFill(Color.WHITE);
+        btn6.setFont(font);
+        btn6.setTextFill(Color.WHITE);
+        btn7.setFont(font);
+        btn7.setTextFill(Color.WHITE);
+        btn8.setFont(font);
+
+
+        btn4.setPrefWidth(180);
+        btn4.setPrefHeight(40);
+        btn5.setPrefWidth(180);
+        btn5.setPrefHeight(40);
+        btn6.setPrefWidth(180);
+        btn6.setPrefHeight(40);
+        btn7.setPrefWidth(180);
+        btn7.setPrefHeight(40);
+        btn8.setPrefWidth(180);
+        btn8.setPrefHeight(40);
+
+        btn4.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Game game = new Game();
+                try {
+                    primaryStage.setScene(game.loadGame(width,height1,1));
+
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        btn5.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Game game = new Game();
+                try {
+                    primaryStage.setScene(game.loadGame(width,height1,2));
+
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        btn6.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Game game = new Game();
+                try {
+                    primaryStage.setScene(game.loadGame(width,height1,3));
+
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        btn7.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Game game = new Game();
+                try {
+                    primaryStage.setScene(game.loadGame(width,height1,4));
+
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+        btn8.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Scene mainscene=new Scene(launch(),width,height);
+                File f = new File("stylesheet.css");
+                mainscene.getStylesheets().clear();
+                mainscene.getStylesheets().add("file:///"+f.getAbsolutePath().replace("\\","/"));
+
+                primaryStage.setScene(mainscene);
+
+
+            }
+        });
+
+
+        return savepane;
+
+    }
+
 }
 

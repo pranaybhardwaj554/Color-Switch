@@ -19,10 +19,10 @@ public class VerticalLine extends Obstacle {
     private boolean isRightward;
     private double lineSize;
     private double orientation;
-    private Group group1;
-    private Group group2;
-    private Timeline timeline1;
-    private Timeline timeline2;
+    private transient Group group1;
+    private transient Group group2;
+    private transient Timeline timeline1;
+    private transient Timeline timeline2;
 
     public VerticalLine(double posX, double posY, double linearSpeed, boolean isRightward, double lineSize) {
         super(posX, posY);

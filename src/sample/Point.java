@@ -5,12 +5,11 @@ import java.io.Serializable;
 public class Point implements Serializable {
     private double x;
     private double y;
-    private String name;
 
-    public Point(double x, double y, String name){
+    public Point(double x, double y){
         this.x=x;
         this.y=y;
-        this.name=name;
+
 
     }
 
@@ -30,16 +29,10 @@ public class Point implements Serializable {
         this.y = y;
     }
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public String toString() {
-        return "Point{" + "x=" + x + ", y=" + y + ", name='" + name + '\'' + '}';
+        return "Point{" + "x=" + x + ", y=" + y + '\'' + '}';
     }
 }

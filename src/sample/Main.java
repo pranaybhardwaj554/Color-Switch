@@ -50,10 +50,9 @@ public class Main extends Application {
     public static void main (String[] args) throws Exception {
         Main main = new Main() ;
         main.launch(args);
-        Game game=new Game();
         CircleObstacle obs1 = new CircleObstacle(2, -130, 20, true, 100, 20);
         Obstacle obs2=(Obstacle)obs1;
-        System.out.println(obs2.getClass());
+
 
     }
 }
