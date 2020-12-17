@@ -18,7 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 
-
+import javafx.scene.media.AudioClip;
 import javafx.scene.text.FontPosture;
 
 import javafx.scene.layout.Pane;
@@ -39,6 +39,8 @@ import javafx.stage.Stage;
 public class MainMenu {
     static Stage primaryStage;
     Stage stage2;
+
+    AudioClip buttonplay = new AudioClip(new File("src/sample/button.wav").toURI().toString());
     public MainMenu(){
         stage2=new Stage();
     }
@@ -46,16 +48,17 @@ public class MainMenu {
 
 
     public Pane launch(){
+
         String yellow="FAE100";String purple="900DFF";String blue ="32DBF0";String pink="FF0181";
         int width=450;
         int height=600;
         int height1=770;
 
-        CircleObstacle c=new CircleObstacle(0,0,6,true,53,7);
-        CircleObstacle c2=new CircleObstacle(0,0,6,false,68,12);
-        CircleObstacle c3=new CircleObstacle(0,0,6,true,88,15);
-        CircleObstacle c4=new CircleObstacle(0,0,5.00,true,15,3);
-        CircleObstacle c5=new CircleObstacle(0,0,5.00,false,15,3);
+        CircleObstacle c=new CircleObstacle(0,0,3,true,53,7);
+        CircleObstacle c2=new CircleObstacle(0,0,3,false,68,12);
+        CircleObstacle c3=new CircleObstacle(0,0,3,true,88,15);
+        CircleObstacle c4=new CircleObstacle(0,0,3,true,15,5);
+        CircleObstacle c5=new CircleObstacle(0,0,3,false,15,5);
         Group a=c.draw();
         Group conc=c2.draw();
         Group conc2=c3.draw();
@@ -225,6 +228,7 @@ public class MainMenu {
         btn1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonplay.play();
                 Game game = new Game();
 
 //                    Pane pane=game.Start(width,height1);
@@ -246,11 +250,22 @@ public class MainMenu {
         btn2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonplay.play();
                 primaryStage.setScene(loadscene);
 
             }
         });
+        btn3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                buttonplay.play();
+                primaryStage.close();
+
+            }
+        });
         return pane;
+
+
 
 
 
@@ -329,13 +344,13 @@ public class MainMenu {
         btn8.setLayoutY(540);
 
         btn4.setFont(font);
-        btn4.setTextFill(Color.WHITE);
+        btn4.setTextFill(Color.BLACK);
         btn5.setFont(font);
-        btn5.setTextFill(Color.WHITE);
+        btn5.setTextFill(Color.BLACK);
         btn6.setFont(font);
-        btn6.setTextFill(Color.WHITE);
+        btn6.setTextFill(Color.BLACK);
         btn7.setFont(font);
-        btn7.setTextFill(Color.WHITE);
+        btn7.setTextFill(Color.BLACK);
         btn8.setFont(font);
 
 
@@ -353,6 +368,7 @@ public class MainMenu {
         btn4.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonplay.play();
                 Game game = new Game();
                 try {
                     primaryStage.setScene(game.loadGame(width,height1,1));
@@ -365,6 +381,7 @@ public class MainMenu {
         btn5.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonplay.play();
                 Game game = new Game();
                 try {
                     primaryStage.setScene(game.loadGame(width,height1,2));
@@ -377,6 +394,7 @@ public class MainMenu {
         btn6.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonplay.play();
                 Game game = new Game();
                 try {
                     primaryStage.setScene(game.loadGame(width,height1,3));
@@ -389,6 +407,7 @@ public class MainMenu {
         btn7.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonplay.play();
                 Game game = new Game();
                 try {
                     primaryStage.setScene(game.loadGame(width,height1,4));
@@ -403,6 +422,7 @@ public class MainMenu {
         btn8.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonplay.play();
                 Scene mainscene=new Scene(launch(),width,height);
                 File f = new File("stylesheet.css");
                 mainscene.getStylesheets().clear();
@@ -413,6 +433,7 @@ public class MainMenu {
 
             }
         });
+
 
 
         return savepane;

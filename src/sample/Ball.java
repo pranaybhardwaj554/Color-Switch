@@ -6,10 +6,12 @@ import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.Group;
+import javafx.scene.effect.Lighting;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
@@ -61,7 +63,6 @@ public class Ball implements Serializable {
         //code elided;
         return 0;
     }
-
 
     public String getColor() {
         return color;
@@ -193,7 +194,8 @@ public class Ball implements Serializable {
     }
     public void game_over(double x, double y){
         if(only_once){
-            only_once=false;
+
+            only_once=true;
             this.getShape().setOpacity(0);
             ArrayList<Polyline> path = new ArrayList<>();
             for(int i=0;i<this.getGame_over().size()/2;i++){
@@ -220,7 +222,28 @@ public class Ball implements Serializable {
                 this.getPathTransition().setDuration(Duration.seconds((Math.random()*(5)+1)));
                 this.getPathTransition().setPath(path.get(i));
                 this.getPathTransition().play();
+
             }
+            Rectangle rect = new Rectangle(20, 20, 60, 60);
+            PathTransition a = new PathTransition();
+            a.setDuration(Duration.seconds(3));
+            a.setPath(path.get(path.size()-1));
+            a.setNode(rect);
+            a.play();
+            a.setOnFinished(e->Game.game_over=true);
+            Rectangle rect1 = new Rectangle(20, 20, 60, 60);
+            PathTransition a1 = new PathTransition();
+            a1.setDuration(Duration.seconds(3));
+            a1.setPath(path.get(path.size()-1));
+            a1.setNode(rect);
+            a1.play();
+            a1.setOnFinished(e->clean_your_shit());
         }
     }
+    public void clean_your_shit(){
+        for(int i=0;i<100;i++){
+            this.getGame_over().get(i).setOpacity(0);
+        }
+    }
+
 }

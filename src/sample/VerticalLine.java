@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
@@ -12,6 +13,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class VerticalLine extends Obstacle {
@@ -23,6 +25,8 @@ public class VerticalLine extends Obstacle {
     private transient Group group2;
     private transient Timeline timeline1;
     private transient Timeline timeline2;
+    transient AudioClip collided = new AudioClip(new File("src/sample/die.wav").toURI().toString());
+    private int count = 0;
 
     public VerticalLine(double posX, double posY, double linearSpeed, boolean isRightward, double lineSize) {
         super(posX, posY);
@@ -38,11 +42,11 @@ public class VerticalLine extends Obstacle {
         this.getGroup1().getTransforms().add(translate1);
         this.getGroup2().getTransforms().add(translate2);
         timeline1 = new Timeline(
-                new KeyFrame(Duration.seconds(5), new KeyValue(translate1.xProperty(), translate1.getX()+420)));
+                new KeyFrame(Duration.seconds(linearSpeed), new KeyValue(translate1.xProperty(), translate1.getX()+420)));
         timeline1.setCycleCount(Timeline.INDEFINITE);
         timeline1.setAutoReverse(true);
         timeline2 = new Timeline(
-                new KeyFrame(Duration.seconds(5), new KeyValue(translate2.xProperty(), translate1.getX()-420)));
+                new KeyFrame(Duration.seconds(linearSpeed), new KeyValue(translate2.xProperty(), translate1.getX()-420)));
         timeline2.setCycleCount(Timeline.INDEFINITE);
         timeline2.setAutoReverse(true);
         timeline2.play();
@@ -50,11 +54,25 @@ public class VerticalLine extends Obstacle {
     }
     @Override
     public boolean actionsPerformed(Ball ball,Group g){
-        g.getChildren().add(ball.gameover_animation());
-        ball.game_over(ball.getGroup().getBoundsInParent().getCenterX(),ball.getGroup().getBoundsInParent().getCenterY());
-        timeline1.stop();
-        timeline2.stop();
-        return false;
+        if(count==0){
+            System.out.println("Collided");
+            collided.play();
+            count=count+1;
+            g.getChildren().add(ball.gameover_animation());
+            ball.game_over(ball.getGroup().getBoundsInParent().getCenterX(),ball.getGroup().getBoundsInParent().getCenterY());
+            timeline1.stop();
+            timeline2.stop();
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+
+    @Override
+    public double getSize(){
+        return getLineSize()+5/2.0;
     }
 
     @Override

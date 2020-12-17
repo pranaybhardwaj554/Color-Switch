@@ -16,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
@@ -33,29 +34,36 @@ import javax.swing.text.SimpleAttributeSet;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 
 public class Game  {
-    boolean a=true;
-    AnimationTimer timer;
-    Label score;
-    Group finalg;
-    int i=0;
-    int down_by=2;
+    Collidable toberemoved;
+    static boolean game_over=false;
+    private boolean a=true;
+    private AnimationTimer timer;
+    private Label score;
+    private Group finalg;
+    private int i=0;
+    private int down_by=2;
     static int times=0;
-    static Group ballg2;
-    static Ball ball;
-    static CircleObstacle obs1;
-    Group obstacle;
-    ArrayList<Group> obss=new ArrayList<>();
-    ArrayList<Collidable> Colli=new ArrayList<>();
-    SaveWork saveWork;
+    Group ballg2;
+    private Ball ball;
+    InGameSettings ingamesettings;
+    CircleObstacle obs1;
+    private Group obstacle;
+    private ArrayList<Group> obss=new ArrayList<>();
+    private ArrayList<Collidable> Colli=new ArrayList<>();
+    private SaveWork saveWork;
     Timeline tl;
-    int k=0;
-    int savestuff=0;
+    private AudioClip jumpSound = new AudioClip(new File("src/sample/jump.wav").toURI().toString());
+    private AudioClip buttonplay = new AudioClip(new File("src/sample/button.wav").toURI().toString());
+
     boolean isPaused=false;
+    private boolean isover=false;
     public Scene Start(double width, double height)throws
             InterruptedException{
+
         finalg = new Group();
         saveWork=new SaveWork();
         String yellow="FAE100";String purple="900DFF";String blue ="32DBF0";String pink="FF0181";
@@ -86,7 +94,7 @@ public class Game  {
         finalg.getChildren().add(ballg2);
         finalg.getChildren().add(Score(width,height));
         Scene scene = new Scene(finalg,width,height);
-        obs1= new CircleObstacle( width/2.0,300,width/2,true,100,17.5);
+        obs1= new CircleObstacle( width/2.0,50,3-ball.getStarsCollected()/100.0,true,100,17.5);
         Colli.add(obs1);
         Group prevobs=obs1.draw();
         obstacle.getChildren().add(prevobs);
@@ -104,22 +112,23 @@ public class Game  {
             public void handle(KeyEvent keyEvent) {
                 switch (keyEvent.getCode()){
                     case W:
-                        System.out.println("yes");
-
-                        if(times==0) {
+                        jumpSound.stop();
+                        jumpSound.play();
+                        if(times==0 && a) {
                             up(ball, ballg);
                         }
                 }
             }
         });
         finalg.getChildren().add(pause);
-        InGameSettings ingamesettings=new InGameSettings(new Pane(), scene);
+        ingamesettings=new InGameSettings(new Pane(), scene);
         Pane pausepane=ingamesettings.settings();
         Scene pauseScene=new Scene(pausepane,width, height);
 
         pausebutton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonplay.play();
                 try {
                     save();
                     ingamesettings.setGame(Game.this);
@@ -128,6 +137,7 @@ public class Game  {
                     e.printStackTrace();
                 }
                 isPaused=true;
+                System.out.println(obss.size());
                 ingamesettings.setSaveWork(saveWork);
 
                 File f = new File("stylesheet.css");
@@ -140,6 +150,13 @@ public class Game  {
             }
         });
         return scene;
+    }
+    public boolean revive(){
+        return a;
+    }
+
+    public void revive(boolean a){
+        this.a=a;
     }
 
     //Move Ball upwards on pressing UP Button
@@ -158,78 +175,195 @@ public class Game  {
     }
 
     public Group spawnobstacle(double width, double height){
-        int spawnob=(int) (Math.random()*10);
+        int spawnob=(int) (Math.random()*9);
         int clock= (int) (Math.random()*2);
+        int color_or_star=(int) (Math.random()*2);
+        int gap=-150;
+        Group g =new Group();
         boolean clockWise=true;
         if(clock==0)
             clockWise=false;
+
         if(spawnob==0) {
-            CircleObstacle obstacle = new CircleObstacle(width / 2.0, -130, 20, clockWise, 100, 17.5);
-            Colli.add(obstacle);
-            return obstacle.draw();
+            CircleObstacle obstacle2 = new CircleObstacle(width / 2.0, -130, 4-ball.getStarsCollected()/100.0, clockWise, 100, 17.5);
+            g=obstacle2.draw();
+
+            if(color_or_star==0){
+                Star obstacle1 = new Star("white",width/2.0,-130 );
+                Colli.add(obstacle1);
+                obss.add(obstacle1.draw());
+                obstacle.getChildren().add(obstacle1.getGroup());
+            }
+            else{
+                ColorSwitcher obstacle1 = new ColorSwitcher(15,width/2.0,width/2.0,-130 );
+                Colli.add(obstacle1);
+                obss.add(obstacle1.draw());
+                obstacle.getChildren().add(obstacle1.getGroup());
+            }
+            Colli.add(obstacle2);
+            return g;
         }
         else if(spawnob==1) {
-            TriangleObstacle obstacle = new TriangleObstacle(width / 2.0, -130, 20, clockWise, 250,ball.getPaint());
-            Colli.add(obstacle);
-            return obstacle.draw();
+            TriangleObstacle obstacle2 = new TriangleObstacle(width / 2.0, -130, 4-ball.getStarsCollected()/100.0, clockWise, 250,ball.getColor());
+            g=obstacle2.draw();
+            //Colli.add(obstacle2);
+            if(color_or_star==0){
+                Star obstacle1 = new Star("white",width/2.0,-130 );
+                Colli.add(obstacle1);
+                obss.add(obstacle1.draw());
+                obstacle.getChildren().add(obstacle1.getGroup());
+            }
+            else{
+                ColorSwitcher obstacle1 = new ColorSwitcher(15,width/2.0,width/2.0,-130 );
+                Colli.add(obstacle1);
+                obss.add(obstacle1.draw());
+                obstacle.getChildren().add(obstacle1.getGroup());
+            }
+            Colli.add(obstacle2);
+            return g;
         }
         else if(spawnob==2) {
-            SquareObstacle obstacle = new SquareObstacle(width / 2.0, -130, 20, clockWise, 200);
-            Colli.add(obstacle);
-            return obstacle.draw();
+            SquareObstacle obstacle2 = new SquareObstacle(width / 2.0, -130, 4-ball.getStarsCollected()/100.0, clockWise, 175);
+            g=obstacle2.draw();
+            //Colli.add(obstacle2);
+            if(color_or_star==0){
+                Star obstacle1 = new Star("white",width/2.0,-130 );
+                Colli.add(obstacle1);
+                obss.add(obstacle1.draw());
+                obstacle.getChildren().add(obstacle1.getGroup());
+            }
+            else{
+                ColorSwitcher obstacle1 = new ColorSwitcher(15,width/2.0,width/2.0,-130 );
+                Colli.add(obstacle1);
+                obss.add(obstacle1.draw());
+                obstacle.getChildren().add(obstacle1.getGroup());
+            }
+            Colli.add(obstacle2);
+            return g;
         }
         else if(spawnob==3) {
-            CrossObstacle obstacle = new CrossObstacle(width / 2.0+70, -130, 20, clockWise, 120,20);
-            Colli.add(obstacle);
-            return obstacle.draw();
+            CrossObstacle obstacle2 = new CrossObstacle(width / 2.0+70, -130, 4-ball.getStarsCollected()/100.0, clockWise, 120,20);
+            g=obstacle2.draw();
+            //Colli.add(obstacle2);
+            if(color_or_star==0){
+                Star obstacle1 = new Star("white",width/2.0,-130+gap );
+                Colli.add(obstacle1);
+                obss.add(obstacle1.draw());
+                obstacle.getChildren().add(obstacle1.getGroup());
+            }
+            else{
+                ColorSwitcher obstacle1 = new ColorSwitcher(15,width/2.0,width/2.0,-130+gap );
+                Colli.add(obstacle1);
+                obss.add(obstacle1.draw());
+                obstacle.getChildren().add(obstacle1.getGroup());
+            }
+            Colli.add(obstacle2);
+            return g;
         }
         else if(spawnob==4) {
-            VerticalLine obstacle = new VerticalLine(0, -130, 20, clockWise, 75);
-            Colli.add(obstacle);
-            return obstacle.draw();
+            VerticalLine obstacle2 = new VerticalLine(0, -130, 5-ball.getStarsCollected()/100.0, clockWise, 75);
+            g=obstacle2.draw();
+            //Colli.add(obstacle2);
+            if(color_or_star==0){
+                Star obstacle1 = new Star("white",width/2.0,-130+gap );
+                Colli.add(obstacle1);
+                obss.add(obstacle1.draw());
+                obstacle.getChildren().add(obstacle1.getGroup());
+            }
+            else{
+                ColorSwitcher obstacle1 = new ColorSwitcher(15,width/2.0,width/2.0,-130+gap );
+                Colli.add(obstacle1);
+                obss.add(obstacle1.draw());
+                obstacle.getChildren().add(obstacle1.getGroup());
+            }
+            Colli.add(obstacle2);
+            return g;
         }
         else if(spawnob==5) {
             double radius1=100;double radius2=70;double stroke=15;
-            CircleObstacle obstacle1 = new CircleObstacle(width / 2.0+radius1+stroke/2.0, -130, 20, clockWise, radius1, stroke);
-            CircleObstacle obstacle2 = new CircleObstacle(width / 2.0-radius2-stroke/2.0, -130, 20, clockWise, radius2, stroke);
-            obstacle1.draw();obstacle2.draw();
-            CircleCircle1Obstacle obstacle = new CircleCircle1Obstacle(obstacle1,obstacle2,ball.getColor());
-            Colli.add(obstacle);
-            return obstacle.draw();
+            CircleObstacle obstacle1 = new CircleObstacle(width / 2.0+radius1+stroke/2.0, -130, 4-ball.getStarsCollected()/100.0, clockWise, radius1, stroke);
+            CircleObstacle obstacle2 = new CircleObstacle(width / 2.0-radius2-stroke/2.0, -130, 4-ball.getStarsCollected()/100.0, clockWise, radius2, stroke);
+            CircleCircle1Obstacle obstacle3 = new CircleCircle1Obstacle(obstacle1,obstacle2,ball.getColor());
+            g=obstacle3.draw();
+            //Colli.add(obstacle3);
+            if(color_or_star==0){
+                Star obstacle4 = new Star("white",width/2.0,-130+gap );
+                Colli.add(obstacle4);
+                obss.add(obstacle4.draw());
+                obstacle.getChildren().add(obstacle4.getGroup());
+            }
+            else{
+                ColorSwitcher obstacle5 = new ColorSwitcher(15,width/2.0,width/2.0,-130+gap );
+                Colli.add(obstacle5);
+                obss.add(obstacle5.draw());
+                obstacle.getChildren().add(obstacle5.getGroup());
+            }
+            Colli.add(obstacle3);
+            return g;
         }
         else if(spawnob==6) {
             double radius1=115;double radius2=90;double stroke=15;
-            CircleObstacle obstacle1 = new CircleObstacle(width / 2.0, -130, 20, clockWise, radius1, stroke);
-            CircleObstacle obstacle2 = new CircleObstacle(width / 2.0, -130, 20, clockWise, radius2, stroke);
-            obstacle1.draw();obstacle2.draw();
-            CircleCircle2Obstacle obstacle = new CircleCircle2Obstacle(obstacle1,obstacle2,ball.getColor());
-            Colli.add(obstacle);
-            return obstacle.draw();
+            CircleObstacle obstacle1 = new CircleObstacle(width / 2.0, -130, 4-ball.getStarsCollected()/100.0, clockWise, radius1, stroke);
+            CircleObstacle obstacle2 = new CircleObstacle(width / 2.0, -130, 4-ball.getStarsCollected()/100.0, clockWise, radius2, stroke);
+            CircleCircle2Obstacle obstacle3 = new CircleCircle2Obstacle(obstacle1,obstacle2,ball.getColor());
+            g=obstacle3.draw();
+            //Colli.add(obstacle3);
+            if(color_or_star==0){
+                Star obstacle4 = new Star("white",width/2.0,-130 );
+                Colli.add(obstacle4);
+                obss.add(obstacle4.draw());
+                obstacle.getChildren().add(obstacle4.getGroup());
+            }
+            else{
+                ColorSwitcher obstacle5 = new ColorSwitcher(15,width/2.0,width/2.0,-130 );
+                Colli.add(obstacle5);
+                obss.add(obstacle5.draw());
+                obstacle.getChildren().add(obstacle5.getGroup());
+            }
+            Colli.add(obstacle3);
+            return g;
         }
         else if(spawnob==7) {
             double radius1=90;double radius2=60;double stroke=22;
-            CrossObstacle obstacle1 = new CrossObstacle(width / 2.0+radius1+stroke/2.0, -130.0, 20,clockWise,radius1,stroke );
-            CrossObstacle obstacle2 = new CrossObstacle(width / 2.0-radius2-stroke/2.0, -130.0, 20, clockWise, radius2,2*stroke/3.0);
-            obstacle1.draw();obstacle2.draw();
-            PlusPlusObstacle obstacle = new PlusPlusObstacle(obstacle1,obstacle2,ball.getColor());
-            Colli.add(obstacle);
-            return obstacle.draw();
-        }
-        else if(spawnob==8) {
-            Star obstacle = new Star("white",width/2.0,-130 );
-            Colli.add(obstacle);
-            return obstacle.draw();
-        }
-        else if(spawnob==9) {
-            ColorSwitcher obstacle = new ColorSwitcher(15,width/2.0,width/2.0,-130 );
-            Colli.add(obstacle);
-            return obstacle.draw();
+            CrossObstacle obstacle1 = new CrossObstacle(width / 2.0+radius1+stroke/2.0, -130.0, 4-ball.getStarsCollected()/100.0,true,radius1,stroke );
+            CrossObstacle obstacle2 = new CrossObstacle(width / 2.0-radius2-stroke/2.0, -130.0, 4-ball.getStarsCollected()/100.0, true, radius2,2*stroke/3.0);
+            PlusPlusObstacle obstacle3 = new PlusPlusObstacle(obstacle1,obstacle2,ball.getColor());
+            g=obstacle3.draw();
+            //Colli.add(obstacle3);
+            if(color_or_star==0){
+                Star obstacle4 = new Star("white",width/2.0,-130+gap );
+                Colli.add(obstacle4);
+                obss.add(obstacle4.draw());
+                obstacle.getChildren().add(obstacle4.getGroup());
+            }
+            else{
+                ColorSwitcher obstacle5 = new ColorSwitcher(15,width/2.0,width/2.0,-130+gap );
+                Colli.add(obstacle5);
+                obss.add(obstacle5.draw());
+                obstacle.getChildren().add(obstacle5.getGroup());
+            }
+            Colli.add(obstacle3);
+            return g;
         }
         else {
-            HorizontalLine obstacle = new HorizontalLine(0, -130, 20, clockWise);
-            Colli.add(obstacle);
-            return obstacle.draw();
+            HorizontalLine obstacle1 = new HorizontalLine(0, -130, 5-ball.getStarsCollected()/100.0, clockWise);
+            g=obstacle1.draw();
+            if(color_or_star==0){
+                Star obstacle4 = new Star("white",width/2.0,-130+gap );
+                Colli.add(obstacle4);
+                obss.add(obstacle4.draw());
+                obstacle.getChildren().add(obstacle4.getGroup());
+            }
+            else{
+                ColorSwitcher obstacle4 = new ColorSwitcher(15,width/2.0,width/2.0,-130+gap );
+                Colli.add(obstacle4);
+                obss.add(obstacle4.draw());
+                obstacle.getChildren().add(obstacle4.getGroup());
+            }
+            Colli.add(obstacle1);
+            return g;
         }
+
     }
     public void addtosavework(Group c){
 
@@ -262,7 +396,7 @@ public class Game  {
                 for (int i = 0; i < Colli.size(); i++) {
                     checkCollision(Colli.get(i));
                 }
-                if (obss.get(obss.size() - 1).getTranslateY() > 500) {
+                if (obss.get(obss.size() - 1).getTranslateY() > 400) {
                     Group c = spawnobstacle(width, height);
                     obss.add(c);
                     obstacle.getChildren().add(c);
@@ -282,9 +416,22 @@ public class Game  {
         timer.stop();
     }
 
+    public AnimationTimer Timer(){
+        return timer;
+    }
+
     //Collision Checker
     public void checkCollision(Collidable obstacle){
         obstacle.checkColor(ball);
+        if(game_over){
+            ingamesettings.setGame(this);
+            Scene gameoversc=new Scene(ingamesettings.Gameover(),450,770);
+            File f = new File("stylesheet.css");
+            gameoversc.getStylesheets().clear();
+            gameoversc.getStylesheets().add("file:///"+f.getAbsolutePath().replace("\\","/"));
+            MainMenu.getPrimaryStage().setScene(gameoversc);
+            game_over=false;
+        }
         ArrayList<Shape> intersect = new ArrayList<>();
         ArrayList<Shape> shape = obstacle.giveShape(ball.getPaint());
         for (int i = 0; i < shape.size(); i++) {
@@ -295,11 +442,11 @@ public class Game  {
                 System.out.println(obstacle.toString());
             }
             if (intersect.get(i).getBoundsInLocal().getWidth() != -1) {
-                System.out.println("Collided");
+
                 if(a){
                     a=obstacle.actionsPerformed(ball,finalg);
                     if(!a){
-                        stopTimer();
+                        toberemoved=obstacle;
                         tl.pause();
                     }
                     setScore();
@@ -317,22 +464,22 @@ public class Game  {
         KeyFrame go_down = new KeyFrame(Duration.seconds(500),end);
         tl = new Timeline(go_down);
         tl.play();
-        AnimationTimer a = new AnimationTimer() {
+        AnimationTimer a2 = new AnimationTimer() {
             @Override
             public void handle(long l) {
+                boolean t = true;
+                boolean a1 = ball.getGroup().getBoundsInParent().getCenterY() <= 740;
+                if(a1 && !isPaused && a) {
 
-                    boolean t = true;
-                    boolean a = ball.getGroup().getBoundsInParent().getCenterY() <= ball.getPosY();
-                    if (a) {
-                        tl.play();
-                    } else {
-                        tl.pause();
-                        t = false;
-                    }
+                    tl.play();
+                } else {
+                    tl.pause();
+                    t = false;
+                }
 
             }
         };
-        a.start();
+        a2.start();
     }
 
     public Label Score(double width , double height){
@@ -349,6 +496,7 @@ public class Game  {
         return;
     }
     public void save() throws IOException {
+        saveWork.removeall();
 
         Point ballpoint=new Point(ball.getGroup().getBoundsInParent().getCenterX(),ball.getGroup().getBoundsInParent().getCenterY());
         saveWork.setBall(ball);
@@ -382,6 +530,7 @@ public class Game  {
             InterruptedException, IOException {
         deserialize(x);
         obstacle=new Group();
+        i=0;
         String yellow="FAE100";String purple="900DFF";String blue ="32DBF0";String pink="FF0181";
         finalg = new Group();
         ball = new Ball(saveWork.getBall().getColor(),10,0,saveWork.getBall().getStarsCollected(),19);
@@ -389,14 +538,14 @@ public class Game  {
 
         Group group1 = new Group();
         ballg2 = new Group();
-        ballg.getChildren().add(ball.draw(width/2.0,saveWork.getBallpoint().getY()-50));
+        ballg.getChildren().add(ball.draw(width/2.0,saveWork.getBallpoint().getY()));
 
         ballg2.getChildren().add(ballg);
         ballg2.getChildren().add(ball.gameover_animation());
         ballg2.getChildren().add(group1);
         finalg.getChildren().add(ballg2);
         finalg.getChildren().add(obstacle);
-        TriangleObstacle triangleObstacle = new TriangleObstacle(2, -130, 20, true, 250,ball.getPaint());
+        TriangleObstacle triangleObstacle = new TriangleObstacle(2, -130, 20, true, 250,ball.getColor());
         CircleObstacle obs1 = new CircleObstacle(2, -130, 20, true, 100, 20);
         HorizontalLine horline = new HorizontalLine(2, -130, 20, true);
         CrossObstacle obstaclea = new CrossObstacle(width / 2.0+70, -130, 20, true, 120,20);
@@ -405,6 +554,7 @@ public class Game  {
         CircleObstacle cobstacle2 = new CircleObstacle(4, -130, 20, false, 40, 20);
         CircleCircle1Obstacle cobstacle = new CircleCircle1Obstacle(cobstacle1,cobstacle2,ball.getColor());
         CircleCircle2Obstacle cobstaclec = new CircleCircle2Obstacle(cobstacle1,cobstacle2,ball.getColor());
+        SquareObstacle sqa = new SquareObstacle(2, -130, 10, true, 10);
         Star sta = new Star("white",width/2.0,-130 );
         ColorSwitcher co = new ColorSwitcher(15,width/2.0,width/2.0,-130 );
 
@@ -424,6 +574,27 @@ public class Game  {
                 c.setTranslateY(saveWork.getPoint(i).getY());
                 obstacle.getChildren().add(c);
                 obss.add(c);
+                if(((TriangleObstacle) saveWork.get(i)).getCount()==1){
+                    obss.get(i).setOpacity(0);
+                    triangleObstacle1.setCount(1);
+                }
+
+
+            }
+            else if(saveWork.get(i).getClass()==sqa.getClass()) {
+
+                SquareObstacle square = new SquareObstacle(((SquareObstacle)saveWork.get(i)).getPosX(), ((SquareObstacle)saveWork.get(i)).getPosY(), ((SquareObstacle)saveWork.get(i)).getRotatingSpeed(), ((SquareObstacle)saveWork.get(i)).isClockwise(), ((SquareObstacle)saveWork.get(i)).getSide());
+                Colli.add(square);
+
+                Group c=square.draw();
+                c.setTranslateX(saveWork.getPoint(i).getX());
+                c.setTranslateY(saveWork.getPoint(i).getY());
+                obstacle.getChildren().add(c);
+                obss.add(c);
+                if(((SquareObstacle) saveWork.get(i)).getCount()==1){
+                    obss.get(i).setOpacity(0);
+                    square.setCount(1);
+                }
 
 
             }
@@ -435,6 +606,10 @@ public class Game  {
                 c.setTranslateY(saveWork.getPoint(i).getY());
                 obstacle.getChildren().add(c);
                 obss.add(c);
+                if(((CircleObstacle) saveWork.get(i)).getCount()==1){
+                    obss.get(i).setOpacity(0);
+                    circ.setCount(1);
+                }
 
             }
             else if(saveWork.get(i).getClass()==horline.getClass()) {
@@ -445,6 +620,10 @@ public class Game  {
                 c.setTranslateY(saveWork.getPoint(i).getY());
                 obstacle.getChildren().add(c);
                 obss.add(c);
+                if(((HorizontalLine) saveWork.get(i)).getCount()==1){
+                    obss.get(i).setOpacity(0);
+                    horline2.setCount(1);
+                }
             }
             else if(saveWork.get(i).getClass()==obstaclea.getClass()) {
                 CrossObstacle cross = new CrossObstacle(((CrossObstacle)saveWork.get(i)).getPosX(), ((CrossObstacle)saveWork.get(i)).getPosY(), ((CrossObstacle)saveWork.get(i)).getRotatingSpeed(), ((CrossObstacle)saveWork.get(i)).isClockwise(),((CrossObstacle)saveWork.get(i)).getOneSideLength(),((CrossObstacle)saveWork.get(i)).getStroke());
@@ -454,6 +633,10 @@ public class Game  {
                 c.setTranslateY(saveWork.getPoint(i).getY());
                 obstacle.getChildren().add(c);
                 obss.add(c);
+                if(((CrossObstacle) saveWork.get(i)).getCount()==1){
+                    obss.get(i).setOpacity(0);
+                    cross.setCount(1);
+                }
             }
             else if(saveWork.get(i).getClass()==obstacle1.getClass()) {
                 VerticalLine vert = new VerticalLine(((VerticalLine)saveWork.get(i)).getPosX(), ((VerticalLine)saveWork.get(i)).getPosY(), ((VerticalLine)saveWork.get(i)).getLinearSpeed(), ((VerticalLine)saveWork.get(i)).isRightward(),((VerticalLine)saveWork.get(i)).getLineSize());
@@ -463,11 +646,15 @@ public class Game  {
                 c.setTranslateY(saveWork.getPoint(i).getY());
                 obstacle.getChildren().add(c);
                 obss.add(c);
+                if(((VerticalLine) saveWork.get(i)).getCount()==1){
+                    obss.get(i).setOpacity(0);
+                    vert.setCount(1);
+                }
             }
 
             else if(saveWork.get(i).getClass()==cobstacle.getClass()) {
                 CircleObstacle circ1 = new CircleObstacle(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle1().getPosX(), ((CircleCircle1Obstacle)saveWork.get(i)).getObstacle1().getPosY(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle1())).getRotatingSpeed(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle1())).isClockWise(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle1())).getRadius(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle1())).getStrokeWidth());
-                CircleObstacle circ2 = new CircleObstacle(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle1().getPosX(), ((CircleCircle1Obstacle)saveWork.get(i)).getObstacle1().getPosY(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle2())).getRotatingSpeed(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle2())).isClockWise(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle2())).getRadius(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle2())).getStrokeWidth());
+                CircleObstacle circ2 = new CircleObstacle(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle2().getPosX(), ((CircleCircle1Obstacle)saveWork.get(i)).getObstacle2().getPosY(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle2())).getRotatingSpeed(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle2())).isClockWise(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle2())).getRadius(), ((CircleObstacle)(((CircleCircle1Obstacle)saveWork.get(i)).getObstacle2())).getStrokeWidth());
                 CircleCircle1Obstacle circ3 = new CircleCircle1Obstacle(circ1,circ2,((CircleCircle1Obstacle)saveWork.get(i)).getCommonColor());
                 Colli.add(circ3);
                 Group c=circ3.draw();
@@ -475,10 +662,14 @@ public class Game  {
                 c.setTranslateY(saveWork.getPoint(i).getY());
                 obstacle.getChildren().add(c);
                 obss.add(c);
+                if(((CircleCircle1Obstacle) saveWork.get(i)).getCount()==1){
+                    obss.get(i).setOpacity(0);
+                    circ3.setCount(1);
+                }
             }
             else if(saveWork.get(i).getClass()==xobstacle.getClass()) {
                 CrossObstacle circ1 = new CrossObstacle(((PlusPlusObstacle)saveWork.get(i)).getObstacle1().getPosX(), ((PlusPlusObstacle)saveWork.get(i)).getObstacle1().getPosY(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle1())).getRotatingSpeed(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle1())).isClockwise(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle1())).getOneSideLength(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle1())).getStroke());
-                CrossObstacle circ2 = new CrossObstacle(((PlusPlusObstacle)saveWork.get(i)).getObstacle1().getPosX(), ((PlusPlusObstacle)saveWork.get(i)).getObstacle1().getPosY(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle2())).getRotatingSpeed(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle2())).isClockwise(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle2())).getOneSideLength(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle2())).getStroke());
+                CrossObstacle circ2 = new CrossObstacle(((PlusPlusObstacle)saveWork.get(i)).getObstacle2().getPosX(), ((PlusPlusObstacle)saveWork.get(i)).getObstacle2().getPosY(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle2())).getRotatingSpeed(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle2())).isClockwise(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle2())).getOneSideLength(), ((CrossObstacle)(((PlusPlusObstacle)saveWork.get(i)).getObstacle2())).getStroke());
                 PlusPlusObstacle circ3 = new PlusPlusObstacle(circ1,circ2,((PlusPlusObstacle)saveWork.get(i)).getCommonColor());
                 Colli.add(circ3);
                 Group c=circ3.draw();
@@ -486,10 +677,15 @@ public class Game  {
                 c.setTranslateY(saveWork.getPoint(i).getY());
                 obstacle.getChildren().add(c);
                 obss.add(c);
+                if(((PlusPlusObstacle) saveWork.get(i)).getCount()==1){
+                    obss.get(i).setOpacity(0);
+                    circ3.setCount(1);
+                }
+
             }
             else if(saveWork.get(i).getClass()==cobstaclec.getClass()) {
                 CircleObstacle circ1 = new CircleObstacle(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle1().getPosX(), ((CircleCircle2Obstacle)saveWork.get(i)).getObstacle1().getPosY(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle1())).getRotatingSpeed(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle1())).isClockWise(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle1())).getRadius(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle1())).getStrokeWidth());
-                CircleObstacle circ2 = new CircleObstacle(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle1().getPosX(), ((CircleCircle2Obstacle)saveWork.get(i)).getObstacle1().getPosY(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle2())).getRotatingSpeed(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle2())).isClockWise(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle2())).getRadius(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle2())).getStrokeWidth());
+                CircleObstacle circ2 = new CircleObstacle(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle2().getPosX(), ((CircleCircle2Obstacle)saveWork.get(i)).getObstacle2().getPosY(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle2())).getRotatingSpeed(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle2())).isClockWise(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle2())).getRadius(), ((CircleObstacle)(((CircleCircle2Obstacle)saveWork.get(i)).getObstacle2())).getStrokeWidth());
                 CircleCircle2Obstacle circ3 = new CircleCircle2Obstacle(circ1,circ2,((CircleCircle2Obstacle)saveWork.get(i)).getCommonColor());
                 Colli.add(circ3);
                 Group c=circ3.draw();
@@ -497,6 +693,11 @@ public class Game  {
                 c.setTranslateY(saveWork.getPoint(i).getY());
                 obstacle.getChildren().add(c);
                 obss.add(c);
+                if(((CircleCircle2Obstacle) saveWork.get(i)).getCount()==1){
+                    obss.get(i).setOpacity(0);
+                    circ3.setCount(1);
+                }
+
             }
             else if(saveWork.get(i).getClass()==sta.getClass()) {
                 Star star = new Star(((Star)saveWork.get(i)).getColor(),((Star)saveWork.get(i)).getPosX(),((Star)saveWork.get(i)).getPosY());
@@ -506,9 +707,11 @@ public class Game  {
                 c.setTranslateY(saveWork.getPoint(i).getY());
                 obstacle.getChildren().add(c);
                 obss.add(c);
-                if(c.getBoundsInParent().getCenterY()>saveWork.getBallpoint().getY()){
-                    c.setOpacity(0);
 
+                if(c.getBoundsInParent().getCenterY()>saveWork.getBallpoint().getY()){
+                    star.getFade().stop();
+                    c.setOpacity(0);
+                    star.setCount(1);
 
                 }
             }
@@ -520,8 +723,10 @@ public class Game  {
                 c.setTranslateY(saveWork.getPoint(i).getY());
                 obstacle.getChildren().add(c);
                 obss.add(c);
+
                 if(c.getBoundsInParent().getCenterY()>saveWork.getBallpoint().getY()){
                     c.setOpacity(0);
+                    colorSwitcher.setCount(1);
 
                 }
             }
@@ -564,20 +769,24 @@ public class Game  {
             public void handle(KeyEvent keyEvent) {
                 switch (keyEvent.getCode()){
                     case W:
+                        jumpSound.stop();
+                        jumpSound.play();
                         System.out.println("yes");
-                        if(times==0) {
+                        if(times==0 && a) {
                             up(ball, ballg);
                         }
+
                 }
             }
         });
 
         finalg.getChildren().add(pause);
-        InGameSettings ingamesettings=new InGameSettings(new Pane(), loadscene);
+        ingamesettings=new InGameSettings(new Pane(), loadscene);
 
         pausebutton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonplay.play();
                 try {
                     save();
                     ingamesettings.setGame(Game.this);
@@ -587,7 +796,6 @@ public class Game  {
                 }
                 isPaused=true;
                 ingamesettings.setSaveWork(saveWork);
-                savestuff++;
                 Pane pausepane=ingamesettings.settings();
                 Scene pauseScene=new Scene(pausepane,width, height);
                 File f = new File("stylesheet.css");
@@ -609,5 +817,13 @@ public class Game  {
 
     public ArrayList<Collidable> getColli() {
         return Colli;
+    }
+
+    public Ball getBall() {
+        return ball;
+    }
+
+    public void setBall(Ball ball) {
+        this.ball = ball;
     }
 }

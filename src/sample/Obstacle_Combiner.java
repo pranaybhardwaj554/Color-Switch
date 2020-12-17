@@ -2,10 +2,12 @@ package sample;
 
 import javafx.animation.Timeline;
 import javafx.scene.Group;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -18,6 +20,8 @@ public abstract class Obstacle_Combiner implements Collidable, Serializable {
     private transient Group group;
     private transient Timeline timeline1;
     private transient Timeline timeline2;
+    transient AudioClip collided = new AudioClip(new File("src/sample/die.wav").toURI().toString());
+    private int count = 0;
 
     public Obstacle_Combiner(Obstacle obstacle1, Obstacle obstacle2, String commonColor) {
         this.obstacle1 = obstacle1;
@@ -82,6 +86,22 @@ public abstract class Obstacle_Combiner implements Collidable, Serializable {
         return group;
     }
 
+    public AudioClip getCollided() {
+        return collided;
+    }
+
+    public void setCollided(AudioClip collided) {
+        this.collided = collided;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     public void setGroup(Group group) {
         this.group = group;
     }
@@ -99,17 +119,25 @@ public abstract class Obstacle_Combiner implements Collidable, Serializable {
 
     @Override
     public boolean actionsPerformed(Ball ball,Group g){
-        g.getChildren().add(ball.gameover_animation());
-        ball.game_over(ball.getGroup().getBoundsInParent().getCenterX(),ball.getGroup().getBoundsInParent().getCenterY());
-        this.getTimeline1().stop();
-        this.getTimeline2().stop();
-        return false;
+        if(count==0){
+            System.out.println("Collided");
+            collided.play();
+            count=count+1;
+            g.getChildren().add(ball.gameover_animation());
+            ball.game_over(ball.getGroup().getBoundsInParent().getCenterX(),ball.getGroup().getBoundsInParent().getCenterY());
+            this.getTimeline1().stop();
+            this.getTimeline2().stop();
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
     @Override
     public void checkColor(Ball ball){
         int k=0;
-        synchronized (this){
+        //synchronized (this){
             if(!ball.getColor().equals(getCommonColor())){
                 if(ball.getColor().equals("FAE100") && getCommonColor().equals("FF0181")){
                     setCommonColor(ball.getColor());//No change is done
@@ -149,7 +177,7 @@ public abstract class Obstacle_Combiner implements Collidable, Serializable {
                 }
                 System.out.println(k);
             }
-        }
+       // }
     }
 
 

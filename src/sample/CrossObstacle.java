@@ -30,6 +30,11 @@ public class CrossObstacle extends Obstacle {
         return stroke;
     }
 
+    @Override
+    public double getSize(){
+        return getOneSideLength()+getStroke()/2.0;
+    }
+
     public void setStroke(double stroke) {
         this.stroke = stroke;
     }
@@ -42,9 +47,10 @@ public class CrossObstacle extends Obstacle {
         int angle=360;
         if(this.isClockwise()==false){
             angle=angle*-1;
+            setRotatingSpeed(getRotatingSpeed()*2);
         }
         setTimeline(new Timeline(
-                new KeyFrame(Duration.seconds(4), new KeyValue(rotation1.angleProperty(), angle))));
+                new KeyFrame(Duration.seconds(getRotatingSpeed()), new KeyValue(rotation1.angleProperty(), angle))));
         getTimeline().setCycleCount(Timeline.INDEFINITE);
         getTimeline().setAutoReverse(false);
         getTimeline().play();

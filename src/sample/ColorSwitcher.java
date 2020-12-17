@@ -1,18 +1,21 @@
 package sample;
 
 import javafx.scene.Group;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Shape;
 
+import java.io.File;
+import java.io.Serializable;
 import java.nio.channels.Pipe;
 import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
 
-public class ColorSwitcher implements Collidable {
+public class ColorSwitcher implements Collidable,Serializable {
     private double radius;
     private double rotatingSpeed;
     private double posX;
@@ -20,6 +23,8 @@ public class ColorSwitcher implements Collidable {
     private transient Shape shape[];
     private transient Group group;
     private int count;
+    transient AudioClip switcher = new AudioClip(new File("src/sample/colorswitch.wav").toURI().toString());
+
     public ColorSwitcher(double radius, double rotatingSpeed, double posX, double posY) {
         this.radius = radius;
         this.rotatingSpeed = rotatingSpeed;
@@ -30,6 +35,15 @@ public class ColorSwitcher implements Collidable {
 
     public void spawn(int x,int y){
         //code elided
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    @Override
+    public double getSize(){
+        return getRadius();
     }
 
 
@@ -63,6 +77,7 @@ public class ColorSwitcher implements Collidable {
             }
             ball.changeColor(colors.get(random));
             this.getGroup().setOpacity(0);
+            switcher.play();
         }
     }
 

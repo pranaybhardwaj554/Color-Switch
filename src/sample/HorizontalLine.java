@@ -24,13 +24,16 @@ public class HorizontalLine extends Obstacle {
         Orientation = 0;
     }
 
-
+    @Override
+    public double getSize(){
+        return 10.0;
+    }
     public void moving(){
         Translate translate = new Translate();
         this.getGroup().getTransforms().add(translate);
         this.setTimeline(new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(translate.xProperty(), -450)),
-                new KeyFrame(Duration.seconds(5), new KeyValue(translate.xProperty(), 0))));
+                new KeyFrame(Duration.seconds(getLinearSpeed()), new KeyValue(translate.xProperty(), 0))));
         this.getTimeline().setCycleCount(Timeline.INDEFINITE);
         this.getTimeline().setAutoReverse(false);
         this.getTimeline().play();

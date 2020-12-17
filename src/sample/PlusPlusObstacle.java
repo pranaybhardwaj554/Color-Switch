@@ -13,8 +13,16 @@ public class PlusPlusObstacle extends Obstacle_Combiner{
     public void set(){
 
     }
-    public void move(){
 
+    @Override
+    public double getSize(){
+        CrossObstacle c1= (CrossObstacle) obstacle1;
+        CrossObstacle c2= (CrossObstacle) obstacle2;
+        return Math.max(c1.getSize(),c2.getSize());
+    }
+    public void move(){
+        CrossObstacle c1= (CrossObstacle) obstacle1;
+        CrossObstacle c2= (CrossObstacle) obstacle2;
         Rotate rotate1 = new Rotate();
         getObstacle1().getGroup().getTransforms().add(rotate1);
         Rotate rotate2 = new Rotate();
@@ -26,18 +34,18 @@ public class PlusPlusObstacle extends Obstacle_Combiner{
         if(getCommonColor().equals("900DFF")||getCommonColor().equals("32DBF0")){
             setTimeline1(new Timeline(
                     new KeyFrame(Duration.seconds(0), new KeyValue(rotate1.angleProperty(), -90)),
-                    new KeyFrame(Duration.seconds(4), new KeyValue(rotate1.angleProperty(), -90+360))));
+                    new KeyFrame(Duration.seconds(c1.getRotatingSpeed()), new KeyValue(rotate1.angleProperty(), -90+360))));
             setTimeline2(new Timeline(
                     new KeyFrame(Duration.seconds(0), new KeyValue(rotate2.angleProperty(), 90)),
-                    new KeyFrame(Duration.seconds(4), new KeyValue(rotate2.angleProperty(), 90-360))));
+                    new KeyFrame(Duration.seconds(c2.getRotatingSpeed()), new KeyValue(rotate2.angleProperty(), 90-360))));
         }
         else if(getCommonColor().equals("FAE100") || getCommonColor().equals("FF0181")){
             setTimeline1(new Timeline(
                     new KeyFrame(Duration.seconds(0), new KeyValue(rotate1.angleProperty(), -180)),
-                    new KeyFrame(Duration.seconds(4), new KeyValue(rotate1.angleProperty(), -180+360))));
+                    new KeyFrame(Duration.seconds(c1.getRotatingSpeed()), new KeyValue(rotate1.angleProperty(), -180+360))));
             setTimeline2(new Timeline(
                     new KeyFrame(Duration.seconds(0), new KeyValue(rotate2.angleProperty(), 0)),
-                    new KeyFrame(Duration.seconds(4), new KeyValue(rotate2.angleProperty(), -360))));
+                    new KeyFrame(Duration.seconds(c2.getRotatingSpeed()), new KeyValue(rotate2.angleProperty(), -360))));
         }
         getTimeline2().setCycleCount(Timeline.INDEFINITE);
         getTimeline2().setAutoReverse(false);

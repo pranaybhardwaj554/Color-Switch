@@ -22,15 +22,20 @@ public class TriangleObstacle extends Obstacle {
     private boolean isClockwise;
     private double side;
     private double orientation;
-    private transient Paint color;
+    private String color;
 
-    public TriangleObstacle(double posX, double posY, double rotatingSpeed, boolean isClockwise, double side, Paint color) {
+    public TriangleObstacle(double posX, double posY, double rotatingSpeed, boolean isClockwise, double side, String color) {
         super(posX, posY);
         this.rotatingSpeed = rotatingSpeed;
         this.isClockwise = isClockwise;
         this.side = side;
         this.orientation = 0;
         this.color=color;
+    }
+
+    @Override
+    public double getSize(){
+        return side*Math.pow(3,-2)+10;
     }
 
     public double getRotatingSpeed() {
@@ -67,10 +72,60 @@ public class TriangleObstacle extends Obstacle {
 
     @Override
     public void checkColor(Ball ball){
+        synchronized (this){
+            if(!ball.getColor().equals(getColor())){
+                if(ball.getColor().equals("FAE100") && !present("FAE100") ){
+                    this.getShape()[1].setStroke(Color.web("FAE100"));
+                    setColor(ball.getColor());
+                }
+                else if(ball.getColor().equals("32DBF0") && !present("32DBF0") ){
+                    this.getShape()[1].setStroke(Color.web("32DBF0"));
+                    setColor(ball.getColor());
+                }
+                else if(ball.getColor().equals("900DFF") && !present("900DFF") ){
+                    this.getShape()[1].setStroke(Color.web("900DFF"));
+                    setColor(ball.getColor());
+                }
+                else if(ball.getColor().equals("FF0181") && !present("FF0181") ){
+                    this.getShape()[1].setStroke(Color.web("FF0181"));
+                    setColor(ball.getColor());
+                }
+            }
+        }
 
     }
+     public boolean present(String color1){
+        boolean a= false;
+         for (int i = 0; i < this.getShape().length; i++) {
+             if (this.getShape()[i].getStroke().equals(Color.web(color1))) {
+                 a=true;
+             }
+         }
+         return a;
+     }
 
-    public void rotate(){
+    public void replace(String color1,String color2) {
+        ArrayList<Integer> index1= new ArrayList<>();
+        ArrayList<Integer> index2= new ArrayList<>();
+        for (int i = 0; i < this.getShape().length; i++) {
+            if (this.getShape()[i].getStroke().equals(Color.web(color1))) {
+                index1.add(i);
+            }
+        }
+        for (int i = 0; i < this.getShape().length; i++) {
+            if (this.getShape()[i].getStroke().equals(Color.web(color2))) {
+                index2.add(i);
+            }
+        }
+        for(int i=0;i<index1.size();i++){
+            this.getShape()[index1.get(i)].setStroke(Color.web(color2));
+        }
+        for(int i=0;i<index2.size();i++){
+            this.getShape()[index2.get(i)].setStroke(Color.web(color1));
+        }return;
+    }
+
+        public void rotate(){
 
         Rotate rotation1 = new Rotate();
         rotation1.pivotXProperty().set(this.getPosX());
@@ -81,18 +136,18 @@ public class TriangleObstacle extends Obstacle {
             angle=angle*-1;
         }
         setTimeline(new Timeline(
-                new KeyFrame(Duration.seconds(3), new KeyValue(rotation1.angleProperty(), angle))));
+                new KeyFrame(Duration.seconds(rotatingSpeed), new KeyValue(rotation1.angleProperty(), angle))));
         getTimeline().setCycleCount(Timeline.INDEFINITE);
         getTimeline().setAutoReverse(false);
         getTimeline().play();
 
     }
 
-    public Paint getColor() {
+    public String getColor() {
         return color;
     }
 
-    public void setColor(Paint color) {
+    public void setColor(String color) {
         this.color = color;
     }
 
@@ -106,7 +161,7 @@ public class TriangleObstacle extends Obstacle {
         //Selecting Desired Color
         int toBeRemoved=0;
         for(int i=0;i<4;i++){
-            if(Color.web(colors.get(i)).equals(this.color)){
+            if(Color.web(colors.get(i)).equals(Color.web(this.color))){
                 System.out.println("True");
                 toBeRemoved=i;
             }
@@ -120,7 +175,7 @@ public class TriangleObstacle extends Obstacle {
         //Drawing Second Line
         Line t2=new Line(centerX-length/2.0,centerY+length*Math.pow(3,-0.5)/2.0,centerX+length/2.0,centerY+length*Math.pow(3,-0.5)/2.0);
         t2.setStrokeLineCap(StrokeLineCap.ROUND);
-        t2.setStroke(this.getColor());
+        t2.setStroke(Color.web(this.getColor()));
         t2.setStrokeWidth(20);
         //Drawing Third Line
         Line t3=new Line(centerX,centerY-length*Math.pow(3,-0.5),centerX+length/2.0,centerY+length*Math.pow(3,-0.5)/2.0);

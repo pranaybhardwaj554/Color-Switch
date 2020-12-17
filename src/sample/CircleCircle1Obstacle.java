@@ -17,10 +17,19 @@ public class CircleCircle1Obstacle extends Obstacle_Combiner{
 
     }
 
+    @Override
+    public double getSize(){
+        CircleObstacle c1= (CircleObstacle)obstacle1;
+        CircleObstacle c2= (CircleObstacle)obstacle2;
+        return Math.max(c1.getRadius()+c1.getStrokeWidth()/2.0,c2.getRadius()+c2.getStrokeWidth()/2.0);
+    }
+
     public void move(){
         Rotate rotate1 = new Rotate();
         getObstacle1().getGroup().getTransforms().add(rotate1);
         Rotate rotate2 = new Rotate();
+        CircleObstacle c1= (CircleObstacle)obstacle1;
+        CircleObstacle c2= (CircleObstacle)obstacle2;
         getObstacle2().getGroup().getTransforms().add(rotate2);
         rotate1.pivotXProperty().set(obstacle1.getPosX());
         rotate1.pivotYProperty().set(obstacle1.getPosY());
@@ -29,18 +38,18 @@ public class CircleCircle1Obstacle extends Obstacle_Combiner{
         if(getCommonColor().equals("FAE100") || getCommonColor().equals("FF0181")){
         setTimeline1(new Timeline(
                 new KeyFrame(Duration.seconds(0), new KeyValue(rotate1.angleProperty(), 180+45)),
-                new KeyFrame(Duration.seconds(4), new KeyValue(rotate1.angleProperty(), 180+45+360))));
+                new KeyFrame(Duration.seconds(c1.getRotatingSpeed()), new KeyValue(rotate1.angleProperty(), 180+45+360))));
         setTimeline2(new Timeline(
                 new KeyFrame(Duration.seconds(0), new KeyValue(rotate2.angleProperty(), 45)),
-                new KeyFrame(Duration.seconds(4), new KeyValue(rotate2.angleProperty(), 45-360))));
+                new KeyFrame(Duration.seconds(c2.getRotatingSpeed()), new KeyValue(rotate2.angleProperty(), 45-360))));
         }
         else if(getCommonColor().equals("900DFF")||getCommonColor().equals("32DBF0")){
             setTimeline1(new Timeline(
                     new KeyFrame(Duration.seconds(0), new KeyValue(rotate1.angleProperty(), 90+45)),
-                    new KeyFrame(Duration.seconds(4), new KeyValue(rotate1.angleProperty(), 90+45+360))));
+                    new KeyFrame(Duration.seconds(c1.getRotatingSpeed()), new KeyValue(rotate1.angleProperty(), 90+45+360))));
             setTimeline2(new Timeline(
                     new KeyFrame(Duration.seconds(0), new KeyValue(rotate2.angleProperty(), -45)),
-                    new KeyFrame(Duration.seconds(4), new KeyValue(rotate2.angleProperty(), -360-45))));
+                    new KeyFrame(Duration.seconds(c2.getRotatingSpeed()), new KeyValue(rotate2.angleProperty(), -360-45))));
         }
         getTimeline2().setCycleCount(Timeline.INDEFINITE);
         getTimeline2().setAutoReverse(false);

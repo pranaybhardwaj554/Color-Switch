@@ -25,6 +25,11 @@ public class SquareObstacle extends Obstacle {
         this.orientation = 0;
     }
 
+    @Override
+    public double getSize(){
+        return side*Math.pow(2,-2)+10;
+    }
+
     public void rotate(){
 
         Rotate rotation1 = new Rotate();
@@ -36,7 +41,7 @@ public class SquareObstacle extends Obstacle {
             angle=angle*-1;
         }
         setTimeline(new Timeline(
-                new KeyFrame(Duration.seconds(3), new KeyValue(rotation1.angleProperty(), angle))));
+                new KeyFrame(Duration.seconds(rotatingSpeed), new KeyValue(rotation1.angleProperty(), angle))));
         getTimeline().setCycleCount(Timeline.INDEFINITE);
         getTimeline().setAutoReverse(false);
         getTimeline().play();

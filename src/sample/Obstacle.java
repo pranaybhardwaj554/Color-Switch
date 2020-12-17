@@ -2,9 +2,11 @@ package sample;
 
 import javafx.animation.Timeline;
 import javafx.scene.Group;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -14,6 +16,8 @@ public abstract class Obstacle implements Collidable, Serializable {
     private transient Group group;
     private transient Timeline timeline;
     private transient Shape shape[];
+    transient AudioClip collided = new AudioClip(new File("src/sample/die.wav").toURI().toString());
+    private int count = 0;
     Obstacle(double posX,double posY){
         this.posX=posX;
         this.posY=posY;
@@ -55,19 +59,32 @@ public abstract class Obstacle implements Collidable, Serializable {
         ArrayList<Shape> give = new ArrayList<>();
         int count=0;
         for(int i=0;i<this.getShape().length;i++){
+            try{
             if(!(this.getShape()[i].getStroke().toString().equals(color.toString()))){
                 give.add(this.getShape()[i]);
                 count++;
+            }
+            }
+            catch (NullPointerException e){
+                System.out.println(this.toString());
             }
         }
         return give;
     }
     @Override
     public boolean actionsPerformed(Ball ball,Group g){
-        g.getChildren().add(ball.gameover_animation());
-        ball.game_over(ball.getGroup().getBoundsInParent().getCenterX(),ball.getGroup().getBoundsInParent().getCenterY());
-        this.getTimeline().stop();
-        return false;
+        if(count==0){
+            System.out.println("Collided");
+            collided.play();
+            count=count+1;
+            g.getChildren().add(ball.gameover_animation());
+            ball.game_over(ball.getGroup().getBoundsInParent().getCenterX(),ball.getGroup().getBoundsInParent().getCenterY());
+            this.getTimeline().stop();
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
     @Override
@@ -107,6 +124,22 @@ public abstract class Obstacle implements Collidable, Serializable {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public AudioClip getCollided() {
+        return collided;
+    }
+
+    public void setCollided(AudioClip collided) {
+        this.collided = collided;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public abstract Group draw();

@@ -2,6 +2,7 @@ package sample;
 
 import javafx.animation.FadeTransition;
 import javafx.scene.Group;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
@@ -10,6 +11,7 @@ import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -21,7 +23,7 @@ public class Star implements Collidable, Serializable {
     private transient Group group;
     private int count;
     private transient FadeTransition Fade;
-
+    transient AudioClip starcollide = new AudioClip(new File("src/sample/star.wav").toURI().toString());
 
     public Star(String color, double posX, double posY) {
         this.color = color;
@@ -39,6 +41,11 @@ public class Star implements Collidable, Serializable {
 
     public void checkColor(Ball ball){
 
+    }
+
+    @Override
+    public double getSize(){
+        return 60*Math.pow(3,-2);
     }
 
     @Override
@@ -73,6 +80,7 @@ public class Star implements Collidable, Serializable {
         if(this.count==0){
             this.getGroup().setOpacity(0);
             ball.setStarsCollected(ball.getStarsCollected()+1);
+            starcollide.play();
             count++;
         }
     }
@@ -84,7 +92,8 @@ public class Star implements Collidable, Serializable {
 
     @Override
     public void resume(){
-        getFade().play();
+        if(this.count==0)
+            getFade().play();
     }
 
     public String getColor() {

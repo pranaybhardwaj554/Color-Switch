@@ -12,4 +12,6 @@ public interface Collidable {
     public void checkColor(Ball ball);
     public void pause();
     public void resume();
+    public double getSize();
+    public Group getGroup();
 }

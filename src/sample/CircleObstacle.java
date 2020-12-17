@@ -27,6 +27,10 @@ public class CircleObstacle extends Obstacle {
         this.orientation=0;
         this.strokeWidth=strokeWidth;
     }
+    @Override
+    public double getSize(){
+        return getRadius()+getStrokeWidth()/2.0;
+    }
 
 
     public void rotate(){
@@ -39,7 +43,7 @@ public class CircleObstacle extends Obstacle {
             angle=angle*-1;
         }
         setTimeline(new Timeline(
-                new KeyFrame(Duration.seconds(3), new KeyValue(rotation1.angleProperty(), angle))));
+                new KeyFrame(Duration.seconds(getRotatingSpeed()), new KeyValue(rotation1.angleProperty(), angle))));
         getTimeline().setCycleCount(Timeline.INDEFINITE);
         getTimeline().setAutoReverse(false);
         getTimeline().play();
