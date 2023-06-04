@@ -9,7 +9,7 @@ Not a fancy ReadMe, attaching some Game Screenshots.
 
 1. Game Over Screen
 
-![Screenshot 2023-06-04 114411](https://github.com/pranaybhardwaj554/Color-Switch/assets/55682223/36cc3e2f-2fa3-45a4-b408-754b9336f736 | width = 50)
+![Screenshot 2023-06-04 114411](https://github.com/pranaybhardwaj554/Color-Switch/assets/55682223/36cc3e2f-2fa3-45a4-b408-754b9336f736 | width = 25)
 
 2. Game Pause Screen
 
