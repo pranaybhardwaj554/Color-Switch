@@ -5,7 +5,7 @@ the intelliJ.
 The tutorial how to link javaFX with IntelliJ-https://www.jetbrains.com/help/idea/javafx.html
 mail me on bhardwajpranay506@gmail.com -In case you have any query.
 
-Not a fancy ReadMe, to making it fun attaching some Game Screenshots.
+Not a fancy ReadMe, to making it fun attaching some Screenshots.
 
 1. Game Over Screen
 
