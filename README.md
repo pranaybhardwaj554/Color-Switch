@@ -9,13 +9,18 @@ Not a fancy ReadMe, attaching some Game Screenshots.
 
 1. Game Over Screen
 
-![Screenshot 2023-06-04 114411](https://github.com/pranaybhardwaj554/Color-Switch/assets/55682223/36cc3e2f-2fa3-45a4-b408-754b9336f736 | width = 50)
+<img src = "https://github.com/pranaybhardwaj554/Color-Switch/assets/55682223/36cc3e2f-2fa3-45a4-b408-754b9336f736" height = 35% width = 35%>
 
 2. Game Pause Screen
 
-![Screenshot 2023-06-04 114522](https://github.com/pranaybhardwaj554/Color-Switch/assets/55682223/74deb9ba-54e4-4d82-a14d-a8ea4cb433dd)
+<img src = "https://github.com/pranaybhardwaj554/Color-Switch/assets/55682223/74deb9ba-54e4-4d82-a14d-a8ea4cb433dd" height = 35% width = 35%>
 
 3. Some Ingame Screenshots 
 
-![Screenshot 2023-06-04 120159](https://github.com/pranaybhardwaj554/Color-Switch/assets/55682223/e439d8b7-1dab-42cc-a245-97b99b61c871)
-![Screenshot 2023-06-04 120241](https://github.com/pranaybhardwaj554/Color-Switch/assets/55682223/d4cf1fc9-0f7d-47ef-8faf-cc6aa4f422e2)
+i) First Ingame Screenshot
+
+<img src = "https://github.com/pranaybhardwaj554/Color-Switch/assets/55682223/e439d8b7-1dab-42cc-a245-97b99b61c871" height = 35% width = 35%>
+
+ii) Second Ingame Screenshot
+
+<img src = "https://github.com/pranaybhardwaj554/Color-Switch/assets/55682223/d4cf1fc9-0f7d-47ef-8faf-cc6aa4f422e2" height = 35% width = 35%>
